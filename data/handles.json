@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "lastUpdated": "2026-02-15T00:00:00Z",
-  "reportThreshold": 5,
+  "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
     "paid_promoter": {
