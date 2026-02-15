@@ -11,13 +11,13 @@
       "borderColor": "#FFD700",
       "description": "Accounts that promote content for payment without disclosure"
     },
-    "bot_automated": {
-      "label": "Bot/Automated",
-      "color": "#808080",
-      "bgColor": "rgba(128, 128, 128, 0.15)",
-      "borderColor": "#808080",
-      "description": "Suspected automated or bot accounts"
-    },
+   "pro_bharat": {
+        "label": "Pro-Bharat",
+        "color": "#FF9933",
+        "bgColor": "rgba(255, 153, 51, 0.15)",
+        "borderColor": "#FF9933",
+        "description": "Accounts that talk about Indian interests and nationalism"
+      },
     "propaganda": {
       "label": "Propaganda",
       "color": "#DC143C",
