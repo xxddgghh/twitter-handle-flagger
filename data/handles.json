@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-15T10:23:07.702Z",
+  "lastUpdated": "2026-02-15T11:49:14.360Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -96,6 +96,14 @@
       "category": "paid_promoter",
       "reportCount": 1,
       "addedAt": "2026-02-15T10:23:07.702Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "hartoshsinghbal": {
+      "category": "anti_india",
+      "reportCount": 1,
+      "addedAt": "2026-02-15T11:49:14.360Z",
       "reporters": [
         "xxddgghh"
       ]
