@@ -1,0 +1,297 @@
+/* Twitter Handle Flagger - Styles */
+
+/* CSS Variables for theming */
+:root {
+  --flagger-bg: #ffffff;
+  --flagger-text: #0f1419;
+  --flagger-text-secondary: #536471;
+  --flagger-border: #cfd9de;
+  --flagger-shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --flagger-bg: #16181c;
+    --flagger-text: #e7e9ea;
+    --flagger-text-secondary: #71767b;
+    --flagger-border: #2f3336;
+    --flagger-shadow: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Flagged tweet styling */
+article[data-testid="tweet"][data-flagged-handle] {
+  position: relative;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Badge styling */
+.handle-flagger-badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+  vertical-align: middle;
+  cursor: help;
+}
+
+/* Tooltip styling */
+.handle-flagger-tooltip {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  min-width: 250px;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--flagger-shadow);
+  font-size: 13px;
+  overflow: hidden;
+}
+
+article[data-testid="tweet"].has-flagger-tooltip:hover .handle-flagger-tooltip {
+  display: block;
+}
+
+.handle-flagger-tooltip .tooltip-header {
+  padding: 10px 12px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--flagger-border);
+  background: var(--flagger-border);
+}
+
+.handle-flagger-tooltip .tooltip-body {
+  padding: 10px 12px;
+  color: var(--flagger-text);
+}
+
+.handle-flagger-tooltip .tooltip-body p {
+  margin: 0 0 8px 0;
+}
+
+.handle-flagger-tooltip .tooltip-body p:last-child {
+  margin-bottom: 0;
+}
+
+.handle-flagger-tooltip .tooltip-meta {
+  font-size: 11px;
+  color: var(--flagger-text-secondary);
+}
+
+/* Report button */
+.handle-flagger-report-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--flagger-text-secondary);
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-report-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.handle-flagger-report-btn.unflagged {
+  opacity: 0.5;
+}
+
+.handle-flagger-report-btn.unflagged:hover {
+  opacity: 1;
+}
+
+.handle-flagger-report-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Report dialog */
+.handle-flagger-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.handle-flagger-dialog .dialog-content {
+  width: 400px;
+  max-width: 90vw;
+  background: var(--flagger-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--flagger-shadow);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.handle-flagger-dialog .dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--flagger-border);
+}
+
+.handle-flagger-dialog .dialog-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--flagger-text);
+}
+
+.handle-flagger-dialog .dialog-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  color: var(--flagger-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.handle-flagger-dialog .dialog-close:hover {
+  background: var(--flagger-border);
+}
+
+.handle-flagger-dialog .dialog-body {
+  padding: 16px;
+}
+
+.handle-flagger-dialog .dialog-body p {
+  margin: 0 0 12px 0;
+  color: var(--flagger-text-secondary);
+  font-size: 14px;
+}
+
+.handle-flagger-dialog .category-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.handle-flagger-dialog .category-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--flagger-bg);
+  border: 2px solid var(--flagger-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-dialog .category-option:hover {
+  border-color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .category-option:has(input:checked) {
+  border-width: 2px;
+}
+
+.handle-flagger-dialog .category-option input {
+  display: none;
+}
+
+.handle-flagger-dialog .category-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.handle-flagger-dialog .category-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--flagger-text);
+}
+
+.handle-flagger-dialog .evidence-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--flagger-text);
+  resize: vertical;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.handle-flagger-dialog .evidence-input:focus {
+  outline: none;
+  border-color: #1d9bf0;
+}
+
+.handle-flagger-dialog .submit-report-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: #1d9bf0;
+  border: none;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.handle-flagger-dialog .submit-report-btn:hover {
+  background: #1a8cd8;
+}
+
+/* Animation for newly flagged tweets */
+@keyframes flagHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 153, 51, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0); }
+}
+
+article[data-testid="tweet"][data-flagged-handle].just-flagged {
+  animation: flagHighlight 0.6s ease-out;
+}

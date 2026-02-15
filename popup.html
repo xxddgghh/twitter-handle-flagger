@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handle Flagger</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f9fa;
+      --text: #0f1419;
+      --text-secondary: #536471;
+      --border: #cfd9de;
+      --primary: #1d9bf0;
+      --danger: #f4212e;
+      --success: #00ba7c;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #16181c;
+        --bg-secondary: #1d1f23;
+        --text: #e7e9ea;
+        --text-secondary: #71767b;
+        --border: #2f3336;
+      }
+    }
+
+    body {
+      width: 360px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff9933, #ff6600);
+      border-radius: 10px;
+    }
+
+    .header-icon svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+
+    .header-info h1 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .header-info p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      padding: 12px 16px;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab:hover {
+      color: var(--text);
+      background: var(--bg-secondary);
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Tab content */
+    .tab-content {
+      display: none;
+      padding: 16px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Categories section */
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .category-item:hover {
+      background: var(--border);
+    }
+
+    .category-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .category-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .category-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .category-count {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .category-toggle {
+      width: 40px;
+      height: 22px;
+      background: var(--border);
+      border-radius: 11px;
+      position: relative;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .category-toggle.active {
+      background: var(--success);
+    }
+
+    .category-toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s ease;
+    }
+
+    .category-toggle.active::after {
+      transform: translateX(18px);
+    }
+
+    /* Report section */
+    .report-section {
+      margin-top: 16px;
+    }
+
+    .report-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .report-input {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .report-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .report-select {
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background: #1a8cd8;
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    /* Settings */
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      font-size: 14px;
+    }
+
+    .setting-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Status */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .status-dot.warning {
+      background: #ffd700;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      padding: 12px 16px;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .notification.success {
+      background: var(--success);
+      color: white;
+    }
+
+    .notification.error {
+      background: var(--danger);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+        <line x1="4" y1="22" x2="4" y2="15"></line>
+      </svg>
+    </div>
+    <div class="header-info">
+      <h1>Handle Flagger</h1>
+      <p>Identify IT Cell & Bot accounts</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="totalHandles">0</div>
+      <div class="stat-label">Flagged Handles</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="totalCategories">0</div>
+      <div class="stat-label">Categories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="lastSync">-</div>
+      <div class="stat-label">Last Sync</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="categories">Categories</button>
+    <button class="tab" data-tab="report">Report</button>
+    <button class="tab" data-tab="settings">Settings</button>
+  </div>
+
+  <div id="categories" class="tab-content active">
+    <p class="section-title">Toggle categories to show/hide</p>
+    <div class="category-list" id="categoryList">
+      <!-- Categories loaded dynamically -->
+    </div>
+  </div>
+
+  <div id="report" class="tab-content">
+    <div class="status">
+      <div class="status-dot"></div>
+      <span class="status-text">Reports are submitted via GitHub Issues</span>
+    </div>
+    
+    <p class="section-title">Report a handle</p>
+    <div class="report-input-group">
+      <input type="text" class="report-input" id="reportHandle" placeholder="@username">
+      <select class="report-select" id="reportCategory">
+        <option value="">Category</option>
+      </select>
+    </div>
+    <textarea class="report-input" id="reportEvidence" placeholder="Evidence or notes (optional)" style="width: 100%; min-height: 80px; margin-bottom: 12px; resize: vertical;"></textarea>
+    <button class="btn" id="submitReport">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+        <line x1="4" y1="22" x2="4" y2="15"></line>
+      </svg>
+      Submit Report via GitHub
+    </button>
+  </div>
+
+  <div id="settings" class="tab-content">
+    <div class="setting-item">
+      <div>
+        <div class="setting-label">Show badges</div>
+        <div class="setting-description">Display category badge next to username</div>
+      </div>
+      <div class="category-toggle active" id="toggleBadges"></div>
+    </div>
+    
+    <div class="setting-item">
+      <div>
+        <div class="setting-label">Show tooltips</div>
+        <div class="setting-description">Show detailed info on hover</div>
+      </div>
+      <div class="category-toggle active" id="toggleTooltips"></div>
+    </div>
+    
+    <div class="setting-item">
+      <div>
+        <div class="setting-label">Highlight style</div>
+        <div class="setting-description">How to highlight flagged tweets</div>
+      </div>
+      <select class="report-select" id="highlightStyle">
+        <option value="border">Border only</option>
+        <option value="background">Background</option>
+        <option value="both">Both</option>
+      </select>
+    </div>
+    
+    <div style="margin-top: 16px;">
+      <button class="btn btn-secondary" id="syncNow">
+        🔄 Sync Database Now
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/xxddgghh/twitter-handle-flagger" target="_blank">View on GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/xxddgghh/twitter-handle-flagger/issues" target="_blank">Report Issues</a>
+  </div>
+
+  <div class="notification" id="notification"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
