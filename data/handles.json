@@ -24,12 +24,24 @@
       "bgColor": "rgba(220, 20, 60, 0.15)",
       "borderColor": "#DC143C",
       "description": "Accounts spreading misinformation or propaganda"
+    },
+     "anti_india": {
+      "label": "Anti-India",
+      "color": "#8B0000",
+      "bgColor": "rgba(139, 0, 0, 0.15)",
+      "borderColor": "#8B0000",
+      "description": "Accounts promoting anti-India narratives or content"
     }
   },
   "handles": {
     "mrsinha": {
       "category": "paid_promoter",
       "reportCount": 5,
+      "addedAt": "2026-02-15T00:00:00Z"
+    },
+     "_sabanaqvi": {
+      "category": "anti_india",
+      "reportCount": 1,
       "addedAt": "2026-02-15T00:00:00Z"
     }
   }
