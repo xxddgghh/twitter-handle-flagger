@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-15T09:06:15.324Z",
+  "lastUpdated": "2026-02-15T09:45:03.409Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -11,13 +11,13 @@
       "borderColor": "#FFD700",
       "description": "Accounts that promote content for payment without disclosure"
     },
-   "pro_bharat": {
-        "label": "Pro-Bharat",
-        "color": "#FF9933",
-        "bgColor": "rgba(255, 153, 51, 0.15)",
-        "borderColor": "#FF9933",
-        "description": "Accounts that talk about Indian interests and nationalism"
-      },
+    "pro_bharat": {
+      "label": "Pro-Bharat",
+      "color": "#FF9933",
+      "bgColor": "rgba(255, 153, 51, 0.15)",
+      "borderColor": "#FF9933",
+      "description": "Accounts that talk about Indian interests and nationalism"
+    },
     "propaganda": {
       "label": "Propaganda",
       "color": "#DC143C",
@@ -56,6 +56,14 @@
       "category": "anti_india",
       "reportCount": 1,
       "addedAt": "2026-02-15T09:06:15.324Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "ajeetbharti": {
+      "category": "pro_bharat",
+      "reportCount": 1,
+      "addedAt": "2026-02-15T09:45:03.409Z",
       "reporters": [
         "xxddgghh"
       ]
