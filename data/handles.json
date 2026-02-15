@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-15T09:00:32.733Z",
+  "lastUpdated": "2026-02-15T09:06:15.324Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -48,6 +48,14 @@
       "category": "anti_india",
       "reportCount": 1,
       "addedAt": "2026-02-15T09:00:32.733Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "mrinalpande1": {
+      "category": "anti_india",
+      "reportCount": 1,
+      "addedAt": "2026-02-15T09:06:15.324Z",
       "reporters": [
         "xxddgghh"
       ]
