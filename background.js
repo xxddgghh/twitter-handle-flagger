@@ -3,10 +3,8 @@
 
 // Configuration
 const CONFIG = {
-  // GitHub raw URL for the handles database
+  // GitHub raw URL for the handles database (single source of truth)
   databaseUrl: 'https://raw.githubusercontent.com/xxddgghh/twitter-handle-flagger/main/data/handles.json',
-  // Fallback to local data
-  localDatabasePath: 'data/handles.json',
   // GitHub API for creating issues
   githubApiUrl: 'https://api.github.com/repos/xxddgghh/twitter-handle-flagger/issues',
   // Sync interval in minutes
@@ -64,12 +62,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// Sync database from GitHub
+// Sync database from GitHub (single source of truth)
 async function syncDatabase() {
-  console.log('Syncing handle database...');
+  console.log('Syncing handle database from GitHub...');
   
   try {
-    // Try fetching from GitHub
     const response = await fetch(CONFIG.databaseUrl, {
       cache: 'no-cache',
       headers: {
@@ -80,26 +77,35 @@ async function syncDatabase() {
     if (response.ok) {
       const data = await response.json();
       await saveDatabase(data);
-      console.log('Database synced from GitHub:', Object.keys(data.handles).length, 'handles');
+      console.log('✅ Database synced from GitHub:', Object.keys(data.handles).length, 'handles');
       return data;
+    } else {
+      console.warn('⚠️ GitHub returned status:', response.status);
+      // Return cached data if available
+      const cached = await getCachedDatabase();
+      if (cached) {
+        console.log('📦 Using cached database:', Object.keys(cached.handles).length, 'handles');
+        return cached;
+      }
     }
   } catch (error) {
-    console.warn('Failed to fetch from GitHub, using local/cached data:', error.message);
+    console.warn('⚠️ Failed to fetch from GitHub:', error.message);
+    // Return cached data if available
+    const cached = await getCachedDatabase();
+    if (cached) {
+      console.log('📦 Using cached database:', Object.keys(cached.handles).length, 'handles');
+      return cached;
+    }
   }
   
-  // Fallback to local data
-  try {
-    const localUrl = chrome.runtime.getURL(CONFIG.localDatabasePath);
-    const response = await fetch(localUrl);
-    const data = await response.json();
-    await saveDatabase(data);
-    console.log('Using local database:', Object.keys(data.handles).length, 'handles');
-    return data;
-  } catch (error) {
-    console.error('Failed to load local database:', error);
-  }
-  
-  return null;
+  console.log('❌ No database available - push handles.json to GitHub repo');
+  return { categories: {}, handles: {} };
+}
+
+// Get cached database without triggering sync
+async function getCachedDatabase() {
+  const result = await chrome.storage.local.get([CONFIG.cacheKey]);
+  return result[CONFIG.cacheKey] || null;
 }
 
 // Save database to local storage
@@ -110,15 +116,15 @@ async function saveDatabase(data) {
   });
 }
 
-// Get database from cache
+// Get database from cache (or sync if not available)
 async function getDatabase() {
-  const result = await chrome.storage.local.get([CONFIG.cacheKey, 'lastSync']);
+  const cached = await getCachedDatabase();
   
-  if (result[CONFIG.cacheKey]) {
-    return result[CONFIG.cacheKey];
+  if (cached) {
+    return cached;
   }
   
-  // If no cache, sync now
+  // If no cache, sync now from GitHub
   return await syncDatabase();
 }
 

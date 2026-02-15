@@ -26,66 +26,102 @@ article[data-testid="tweet"][data-flagged-handle] {
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
+/* Badge wrapper - contains badge and tooltip */
+.handle-flagger-badge-wrapper {
+  display: inline-flex !important;
+  position: relative !important;
+  margin-left: 8px !important;
+  vertical-align: middle !important;
+}
+
 /* Badge styling */
 .handle-flagger-badge {
   display: inline-flex !important;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  margin-left: 8px;
-  vertical-align: middle;
-  cursor: help;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px !important;
+  border-radius: 12px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
 }
 
-/* Tooltip styling */
+/* Simple tooltip - BELOW badge */
 .handle-flagger-tooltip {
   display: none;
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1000;
-  min-width: 250px;
-  background: var(--flagger-bg);
-  border: 1px solid var(--flagger-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px var(--flagger-shadow);
-  font-size: 13px;
-  overflow: hidden;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 6px; /* invisible bridge for hover */
+  z-index: 999999;
 }
 
-article[data-testid="tweet"].has-flagger-tooltip:hover .handle-flagger-tooltip {
+.handle-flagger-tooltip .hf-tooltip-content {
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
+}
+
+.handle-flagger-tooltip .hf-tooltip-content a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.handle-flagger-tooltip .hf-tooltip-content a:hover {
+  text-decoration: underline;
+}
+
+/* Show tooltip on badge wrapper hover - stays visible when moving to tooltip */
+.handle-flagger-badge-wrapper:hover .handle-flagger-tooltip {
   display: block;
 }
 
-.handle-flagger-tooltip .tooltip-header {
-  padding: 10px 12px;
-  font-weight: 700;
-  border-bottom: 1px solid var(--flagger-border);
-  background: var(--flagger-border);
-}
-
-.handle-flagger-tooltip .tooltip-body {
-  padding: 10px 12px;
-  color: var(--flagger-text);
-}
-
-.handle-flagger-tooltip .tooltip-body p {
-  margin: 0 0 8px 0;
-}
-
-.handle-flagger-tooltip .tooltip-body p:last-child {
-  margin-bottom: 0;
-}
-
-.handle-flagger-tooltip .tooltip-meta {
-  font-size: 11px;
+/* Report button - Top right position (near ... menu) */
+.handle-flagger-report-btn-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
   color: var(--flagger-text-secondary);
+  transition: all 0.15s ease;
+  margin-right: 4px;
+  z-index: 10000;
+  position: relative;
 }
 
-/* Report button */
+.handle-flagger-report-btn-top:hover {
+  background: rgba(220, 20, 60, 0.15);
+  color: #DC143C;
+  transform: scale(1.1);
+}
+
+.handle-flagger-report-btn-top.unflagged {
+  opacity: 0.4;
+}
+
+.handle-flagger-report-btn-top.unflagged:hover {
+  opacity: 1;
+  background: rgba(220, 20, 60, 0.1);
+  color: #DC143C;
+}
+
+.handle-flagger-report-btn-top svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Legacy report button (keeping for compatibility) */
 .handle-flagger-report-btn {
   display: flex;
   align-items: center;
@@ -216,19 +252,38 @@ article[data-testid="tweet"].has-flagger-tooltip:hover .handle-flagger-tooltip {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+  padding-right: 40px;
   background: var(--flagger-bg);
   border: 2px solid var(--flagger-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
+  position: relative;
 }
 
 .handle-flagger-dialog .category-option:hover {
   border-color: var(--flagger-text-secondary);
+  background: rgba(0, 0, 0, 0.02);
 }
 
+/* Selected category styling */
 .handle-flagger-dialog .category-option:has(input:checked) {
   border-width: 2px;
+  background: rgba(29, 155, 240, 0.1);
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2);
+}
+
+.handle-flagger-dialog .category-option:has(input:checked) .category-label {
+  font-weight: 700;
+}
+
+.handle-flagger-dialog .category-option:has(input:checked)::after {
+  content: '✓';
+  position: absolute;
+  right: 12px;
+  font-size: 16px;
+  color: #1d9bf0;
+  font-weight: bold;
 }
 
 .handle-flagger-dialog .category-option input {
@@ -283,6 +338,172 @@ article[data-testid="tweet"].has-flagger-tooltip:hover .handle-flagger-tooltip {
 
 .handle-flagger-dialog .submit-report-btn:hover {
   background: #1a8cd8;
+}
+
+/* Proof section styling */
+.handle-flagger-dialog .proof-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(29, 155, 240, 0.05);
+  border: 1px solid rgba(29, 155, 240, 0.2);
+  border-radius: 12px;
+}
+
+.handle-flagger-dialog .proof-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  margin-bottom: 10px;
+}
+
+.handle-flagger-dialog .proof-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.handle-flagger-dialog .proof-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .proof-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.handle-flagger-dialog .proof-url {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--flagger-text-secondary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.handle-flagger-dialog .copy-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--flagger-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-dialog .copy-btn:hover {
+  background: var(--flagger-border);
+}
+
+.handle-flagger-dialog .tweet-preview {
+  background: var(--flagger-bg);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--flagger-border);
+}
+
+.handle-flagger-dialog .tweet-text {
+  font-style: italic;
+  color: var(--flagger-text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.handle-flagger-dialog .report-note {
+  text-align: center;
+  font-size: 11px !important;
+  color: var(--flagger-text-secondary) !important;
+  margin-top: 12px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Tweet Snapshot Preview */
+.handle-flagger-dialog .snapshot-preview {
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.handle-flagger-dialog .snapshot-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.handle-flagger-dialog .snapshot-header strong {
+  color: var(--flagger-text);
+}
+
+.handle-flagger-dialog .snapshot-handle {
+  color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .snapshot-time {
+  color: var(--flagger-text-secondary);
+  font-size: 12px;
+}
+
+.handle-flagger-dialog .snapshot-text {
+  color: var(--flagger-text);
+  line-height: 1.4;
+  margin-bottom: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid #1d9bf0;
+}
+
+.handle-flagger-dialog .snapshot-media {
+  color: var(--flagger-text-secondary);
+  font-size: 12px;
+  padding: 6px 8px;
+  background: rgba(29, 155, 240, 0.1);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.handle-flagger-dialog .snapshot-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--flagger-text-secondary);
+  padding-top: 8px;
+  border-top: 1px solid var(--flagger-border);
+}
+
+.handle-flagger-dialog .proof-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.handle-flagger-dialog .archive-link {
+  font-size: 12px;
+}
+
+.handle-flagger-dialog .archive-btn {
+  color: #1d9bf0;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.handle-flagger-dialog .archive-btn:hover {
+  text-decoration: underline;
 }
 
 /* Animation for newly flagged tweets */

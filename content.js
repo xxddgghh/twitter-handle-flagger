@@ -168,13 +168,19 @@
     addReportButton(tweetElement, handleInfo.handle);
   }
 
-  // Add category badge to tweet
+  // Add category badge with tooltip to tweet
   function addBadge(tweetElement, handleInfo) {
     // Check if badge already exists
-    if (tweetElement.querySelector('.handle-flagger-badge')) return;
+    if (tweetElement.querySelector('.handle-flagger-badge-wrapper')) return;
     
-    const { categoryInfo, reportCount } = handleInfo;
+    const { categoryInfo, handle, reportCount, addedAt } = handleInfo;
+    const addedDate = addedAt ? new Date(addedAt).toLocaleDateString() : 'Unknown';
     
+    // Create wrapper to hold both badge and tooltip
+    const wrapper = document.createElement('div');
+    wrapper.className = 'handle-flagger-badge-wrapper';
+    
+    // Create badge
     const badge = document.createElement('div');
     badge.className = 'handle-flagger-badge';
     badge.style.cssText = `
@@ -188,77 +194,193 @@
       font-size: 11px;
       font-weight: 600;
       color: ${categoryInfo.color};
-      margin-left: 8px;
     `;
     badge.innerHTML = `
       <span style="width: 6px; height: 6px; background: ${categoryInfo.color}; border-radius: 50%;"></span>
       ${categoryInfo.label}
     `;
     
-    // Find username element and append badge
+    // Create simple tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'handle-flagger-tooltip';
+    
+    // GitHub search URL for reports about this handle
+    const githubReportsUrl = `https://github.com/xxddgghh/twitter-handle-flagger/issues?q=is%3Aissue+%40${handle}`;
+    
+    tooltip.innerHTML = `
+      <div class="hf-tooltip-content">
+        <a href="${githubReportsUrl}" target="_blank" style="color: ${categoryInfo.color};">Read more →</a>
+      </div>
+    `;
+    
+    wrapper.appendChild(badge);
+    wrapper.appendChild(tooltip);
+    
+    // Find username element and append wrapper
     const userNameEl = tweetElement.querySelector('[data-testid="User-Name"]');
     if (userNameEl) {
       const firstLine = userNameEl.querySelector('div');
-      if (firstLine && !firstLine.querySelector('.handle-flagger-badge')) {
-        firstLine.appendChild(badge);
+      if (firstLine && !firstLine.querySelector('.handle-flagger-badge-wrapper')) {
+        firstLine.appendChild(wrapper);
       }
     }
   }
 
-  // Add tooltip to tweet
+  // Tooltip is now part of addBadge - this function kept for compatibility
   function addTooltip(tweetElement, handleInfo) {
-    if (tweetElement.querySelector('.handle-flagger-tooltip')) return;
-    
-    const { categoryInfo, handle, reportCount, addedAt } = handleInfo;
-    
-    const tooltip = document.createElement('div');
-    tooltip.className = 'handle-flagger-tooltip';
-    
-    const addedDate = addedAt ? new Date(addedAt).toLocaleDateString() : 'Unknown';
-    
-    tooltip.innerHTML = `
-      <div class="tooltip-header" style="color: ${categoryInfo.color}">
-        ${categoryInfo.label}
-      </div>
-      <div class="tooltip-body">
-        <p><strong>@${handle}</strong></p>
-        <p>${categoryInfo.description}</p>
-        <p class="tooltip-meta">
-          ${reportCount} reports · Added ${addedDate}
-        </p>
-      </div>
-    `;
-    
-    tweetElement.appendChild(tooltip);
-    tweetElement.classList.add('has-flagger-tooltip');
+    // Tooltip is now added together with badge in addBadge()
+    // This function is kept for backward compatibility but does nothing
   }
 
-  // Add report button to tweet
+  // Add report button to tweet (top-right corner)
   function addReportButton(tweetElement, handle) {
-    if (tweetElement.querySelector('.handle-flagger-report-btn')) return;
+    if (tweetElement.querySelector('.handle-flagger-report-btn-top')) return;
     
     const btn = document.createElement('button');
-    btn.className = 'handle-flagger-report-btn';
-    btn.title = 'Report this handle';
-    btn.innerHTML = FLAG_ICON;
+    btn.className = 'handle-flagger-report-btn-top';
+    btn.title = 'Report this handle to community';
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+        <line x1="4" y1="22" x2="4" y2="15"></line>
+      </svg>
+    `;
     
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      openReportDialog(handle);
+      openReportDialog(handle, tweetElement);
     });
     
-    // Add to tweet actions area
-    const actionsBar = tweetElement.querySelector('[role="group"]');
-    if (actionsBar) {
-      actionsBar.appendChild(btn);
+    // Find the "more options" (...) button area and place report button nearby
+    const moreButton = tweetElement.querySelector('[data-testid="caret"]');
+    if (moreButton) {
+      const container = moreButton.closest('div');
+      if (container && container.parentElement) {
+        container.parentElement.insertBefore(btn, container);
+      }
+    } else {
+      // Fallback: add to the header area
+      const header = tweetElement.querySelector('[data-testid="User-Name"]');
+      if (header) {
+        const headerRow = header.closest('div[class]');
+        if (headerRow) {
+          headerRow.style.position = 'relative';
+          btn.style.position = 'absolute';
+          btn.style.right = '40px';
+          btn.style.top = '0';
+          headerRow.appendChild(btn);
+        }
+      }
     }
   }
 
+  // Extract tweet URL from tweet element
+  function extractTweetUrl(tweetElement) {
+    // Look for the timestamp link which contains the tweet URL
+    const timeLink = tweetElement.querySelector('a[href*="/status/"] time');
+    if (timeLink) {
+      const link = timeLink.closest('a');
+      if (link) {
+        return 'https://x.com' + link.getAttribute('href');
+      }
+    }
+    // Fallback: try to find any status link
+    const statusLink = tweetElement.querySelector('a[href*="/status/"]');
+    if (statusLink) {
+      const href = statusLink.getAttribute('href');
+      if (href.includes('/status/')) {
+        return 'https://x.com' + href;
+      }
+    }
+    return window.location.href;
+  }
+
+  // Extract tweet text from tweet element
+  function extractTweetText(tweetElement) {
+    const tweetTextEl = tweetElement.querySelector('[data-testid="tweetText"]');
+    if (tweetTextEl) {
+      return tweetTextEl.textContent.slice(0, 500); // Increased limit
+    }
+    return '';
+  }
+
+  // Extract full tweet snapshot data
+  function extractTweetSnapshot(tweetElement) {
+    const snapshot = {
+      url: extractTweetUrl(tweetElement),
+      text: extractTweetText(tweetElement),
+      author: {},
+      timestamp: '',
+      stats: {},
+      media: []
+    };
+
+    // Extract author info
+    const userNameEl = tweetElement.querySelector('[data-testid="User-Name"]');
+    if (userNameEl) {
+      const displayName = userNameEl.querySelector('span')?.textContent || '';
+      const handleMatch = userNameEl.textContent.match(/@(\w+)/);
+      snapshot.author = {
+        displayName: displayName,
+        handle: handleMatch ? handleMatch[1] : ''
+      };
+    }
+
+    // Extract timestamp
+    const timeEl = tweetElement.querySelector('time');
+    if (timeEl) {
+      snapshot.timestamp = timeEl.getAttribute('datetime') || timeEl.textContent;
+    }
+
+    // Extract engagement stats
+    const statsGroup = tweetElement.querySelector('[role="group"]');
+    if (statsGroup) {
+      const buttons = statsGroup.querySelectorAll('button');
+      const statLabels = ['replies', 'retweets', 'likes', 'views'];
+      buttons.forEach((btn, idx) => {
+        const value = btn.querySelector('span[data-testid]')?.textContent || 
+                      btn.querySelector('span')?.textContent || '0';
+        if (statLabels[idx] && value) {
+          snapshot.stats[statLabels[idx]] = value;
+        }
+      });
+    }
+
+    // Extract media (images/videos)
+    const mediaElements = tweetElement.querySelectorAll('[data-testid="tweetPhoto"] img, video');
+    mediaElements.forEach(media => {
+      if (media.tagName === 'IMG') {
+        snapshot.media.push({ type: 'image', url: media.src });
+      } else if (media.tagName === 'VIDEO') {
+        snapshot.media.push({ type: 'video', poster: media.poster || '' });
+      }
+    });
+
+    return snapshot;
+  }
+
+  // Generate archive.today URL
+  function getArchiveUrl(tweetUrl) {
+    return `https://archive.today/?run=1&url=${encodeURIComponent(tweetUrl)}`;
+  }
+
   // Open report dialog
-  function openReportDialog(handle) {
+  function openReportDialog(handle, tweetElement = null) {
     // Store handle for popup
     chrome.storage.local.set({ pendingReport: handle });
+    
+    // Extract full tweet snapshot
+    const snapshot = tweetElement ? extractTweetSnapshot(tweetElement) : {
+      url: window.location.href,
+      text: '',
+      author: { handle: handle },
+      timestamp: '',
+      stats: {},
+      media: []
+    };
+    
+    const archiveUrl = getArchiveUrl(snapshot.url);
     
     // Create inline report dialog
     const existingDialog = document.querySelector('.handle-flagger-dialog');
@@ -269,7 +391,7 @@
     dialog.innerHTML = `
       <div class="dialog-content">
         <div class="dialog-header">
-          <h3>Report @${handle}</h3>
+          <h3>🚩 Report @${handle}</h3>
           <button class="dialog-close">&times;</button>
         </div>
         <div class="dialog-body">
@@ -283,8 +405,50 @@
               </label>
             `).join('')}
           </div>
-          <textarea class="evidence-input" placeholder="Optional: Add evidence or notes..."></textarea>
-          <button class="submit-report-btn">Submit Report via GitHub</button>
+          
+          <div class="proof-section">
+            <label class="proof-label">📸 Tweet Snapshot (auto-captured)</label>
+            <div class="snapshot-preview">
+              <div class="snapshot-header">
+                <strong>${snapshot.author.displayName || ''}</strong>
+                <span class="snapshot-handle">@${snapshot.author.handle || handle}</span>
+                ${snapshot.timestamp ? `<span class="snapshot-time">· ${new Date(snapshot.timestamp).toLocaleString()}</span>` : ''}
+              </div>
+              ${snapshot.text ? `
+              <div class="snapshot-text">${snapshot.text}</div>
+              ` : ''}
+              ${snapshot.media.length > 0 ? `
+              <div class="snapshot-media">
+                📷 ${snapshot.media.length} media attachment(s)
+              </div>
+              ` : ''}
+              ${Object.keys(snapshot.stats).length > 0 ? `
+              <div class="snapshot-stats">
+                ${snapshot.stats.replies ? `💬 ${snapshot.stats.replies}` : ''}
+                ${snapshot.stats.retweets ? `🔁 ${snapshot.stats.retweets}` : ''}
+                ${snapshot.stats.likes ? `❤️ ${snapshot.stats.likes}` : ''}
+                ${snapshot.stats.views ? `👁️ ${snapshot.stats.views}` : ''}
+              </div>
+              ` : ''}
+            </div>
+            
+            <div class="proof-links">
+              <div class="proof-item">
+                <span class="proof-icon">🔗</span>
+                <input type="text" class="proof-url" value="${snapshot.url}" readonly>
+                <button class="copy-btn" data-url="${snapshot.url}" title="Copy URL">📋</button>
+              </div>
+              <div class="proof-item archive-link">
+                <span class="proof-icon">📦</span>
+                <span>Archive snapshot:</span>
+                <a href="${archiveUrl}" target="_blank" class="archive-btn">Create Archive →</a>
+              </div>
+            </div>
+          </div>
+          
+          <textarea class="evidence-input" placeholder="Add additional notes or context (optional)..."></textarea>
+          <button class="submit-report-btn">🚀 Submit Report via GitHub</button>
+          <p class="report-note">📋 Full tweet snapshot will be included in the report</p>
         </div>
       </div>
     `;
@@ -297,14 +461,65 @@
       if (e.target === dialog) dialog.remove();
     });
     
+    // Copy button handler
+    const copyBtn = dialog.querySelector('.copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(snapshot.url);
+        copyBtn.textContent = '✅';
+        setTimeout(() => copyBtn.textContent = '📋', 1500);
+      });
+    }
+    
     dialog.querySelector('.submit-report-btn').addEventListener('click', async () => {
       const selectedCategory = dialog.querySelector('input[name="category"]:checked');
-      const evidence = dialog.querySelector('.evidence-input').value;
+      const additionalNotes = dialog.querySelector('.evidence-input').value;
       
       if (!selectedCategory) {
         alert('Please select a category');
         return;
       }
+      
+      // Build comprehensive evidence with full snapshot
+      const evidenceLines = [
+        `## 📸 Tweet Snapshot`,
+        ``,
+        `**Author:** ${snapshot.author.displayName || ''} (@${snapshot.author.handle || handle})`,
+        `**Date:** ${snapshot.timestamp ? new Date(snapshot.timestamp).toLocaleString() : 'Unknown'}`,
+        `**Tweet URL:** ${snapshot.url}`,
+        `**Archive Link:** [Create Archive](${archiveUrl})`,
+        ``,
+        `### Tweet Content`,
+        `> ${snapshot.text || 'No text content'}`,
+        ``
+      ];
+      
+      if (Object.keys(snapshot.stats).length > 0) {
+        evidenceLines.push(`### Engagement Stats`);
+        evidenceLines.push(`| Replies | Retweets | Likes | Views |`);
+        evidenceLines.push(`|---------|----------|-------|-------|`);
+        evidenceLines.push(`| ${snapshot.stats.replies || '-'} | ${snapshot.stats.retweets || '-'} | ${snapshot.stats.likes || '-'} | ${snapshot.stats.views || '-'} |`);
+        evidenceLines.push(``);
+      }
+      
+      if (snapshot.media.length > 0) {
+        evidenceLines.push(`### Media Attachments`);
+        snapshot.media.forEach((m, i) => {
+          if (m.type === 'image' && m.url) {
+            evidenceLines.push(`![Image ${i + 1}](${m.url})`);
+          } else if (m.type === 'video') {
+            evidenceLines.push(`- Video attachment ${i + 1}`);
+          }
+        });
+        evidenceLines.push(``);
+      }
+      
+      if (additionalNotes) {
+        evidenceLines.push(`### Reporter's Notes`);
+        evidenceLines.push(additionalNotes);
+      }
+      
+      const evidence = evidenceLines.join('\n');
       
       chrome.runtime.sendMessage({
         action: 'submitReport',
@@ -362,24 +577,46 @@
     });
   }
 
-  // Add report button to unflagged tweets
+  // Add report button to unflagged tweets (top-right corner)
   function addUnflaggedReportButton(tweetElement, handle) {
-    if (tweetElement.querySelector('.handle-flagger-report-btn')) return;
+    if (tweetElement.querySelector('.handle-flagger-report-btn-top')) return;
     
     const btn = document.createElement('button');
-    btn.className = 'handle-flagger-report-btn unflagged';
+    btn.className = 'handle-flagger-report-btn-top unflagged';
     btn.title = `Report @${handle}`;
-    btn.innerHTML = FLAG_ICON;
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+        <line x1="4" y1="22" x2="4" y2="15"></line>
+      </svg>
+    `;
     
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      openReportDialog(handle);
+      openReportDialog(handle, tweetElement);
     });
     
-    const actionsBar = tweetElement.querySelector('[role="group"]');
-    if (actionsBar) {
-      actionsBar.appendChild(btn);
+    // Find the "more options" (...) button area and place report button nearby
+    const moreButton = tweetElement.querySelector('[data-testid="caret"]');
+    if (moreButton) {
+      const container = moreButton.closest('div');
+      if (container && container.parentElement) {
+        container.parentElement.insertBefore(btn, container);
+      }
+    } else {
+      // Fallback: add to the header area
+      const header = tweetElement.querySelector('[data-testid="User-Name"]');
+      if (header) {
+        const headerRow = header.closest('div[class]');
+        if (headerRow) {
+          headerRow.style.position = 'relative';
+          btn.style.position = 'absolute';
+          btn.style.right = '40px';
+          btn.style.top = '0';
+          headerRow.appendChild(btn);
+        }
+      }
     }
   }
 
