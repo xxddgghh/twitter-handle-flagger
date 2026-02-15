@@ -11,6 +11,13 @@
       "borderColor": "#FFD700",
       "description": "Accounts that promote content for payment without disclosure"
     },
+    "bot_automated": {
+      "label": "Bot/Automated",
+      "color": "#808080",
+      "bgColor": "rgba(128, 128, 128, 0.15)",
+      "borderColor": "#808080",
+      "description": "Suspected automated or bot accounts"
+    },
     "propaganda": {
       "label": "Propaganda",
       "color": "#DC143C",
@@ -19,5 +26,11 @@
       "description": "Accounts spreading misinformation or propaganda"
     }
   },
-  "handles": {}
+  "handles": {
+    "mrsinha": {
+      "category": "paid_promoter",
+      "reportCount": 5,
+      "addedAt": "2026-02-15T00:00:00Z"
+    }
+  }
 }
