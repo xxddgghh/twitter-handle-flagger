@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-15T00:00:00Z",
+  "reportThreshold": 5,
+  "githubRepo": "xxddgghh/twitter-handle-flagger",
+  "categories": {
+    "paid_promoter": {
+      "label": "Paid Promoter",
+      "color": "#FFD700",
+      "bgColor": "rgba(255, 215, 0, 0.15)",
+      "borderColor": "#FFD700",
+      "description": "Accounts that promote content for payment without disclosure"
+    },
+    "propaganda": {
+      "label": "Propaganda",
+      "color": "#DC143C",
+      "bgColor": "rgba(220, 20, 60, 0.15)",
+      "borderColor": "#DC143C",
+      "description": "Accounts spreading misinformation or propaganda"
+    }
+  },
+  "handles": {}
+}
