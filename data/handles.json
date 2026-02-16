@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-16T10:26:35.509Z",
+  "lastUpdated": "2026-02-16T10:41:04.644Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -264,6 +264,14 @@
       "category": "pro_bharat",
       "reportCount": 1,
       "addedAt": "2026-02-16T10:26:35.509Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "caleb_friesen": {
+      "category": "pro_bharat",
+      "reportCount": 1,
+      "addedAt": "2026-02-16T10:41:04.644Z",
       "reporters": [
         "xxddgghh"
       ]
