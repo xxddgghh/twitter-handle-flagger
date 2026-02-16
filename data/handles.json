@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-16T10:41:04.644Z",
+  "lastUpdated": "2026-02-16T17:40:47.221Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -272,6 +272,14 @@
       "category": "pro_bharat",
       "reportCount": 1,
       "addedAt": "2026-02-16T10:41:04.644Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "agentsaffron": {
+      "category": "propaganda",
+      "reportCount": 1,
+      "addedAt": "2026-02-16T17:40:47.221Z",
       "reporters": [
         "xxddgghh"
       ]
