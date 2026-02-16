@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-16T17:40:47.221Z",
+  "lastUpdated": "2026-02-16T17:46:24.691Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -280,6 +280,14 @@
       "category": "propaganda",
       "reportCount": 1,
       "addedAt": "2026-02-16T17:40:47.221Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "itsck47": {
+      "category": "propaganda",
+      "reportCount": 1,
+      "addedAt": "2026-02-16T17:46:24.691Z",
       "reporters": [
         "xxddgghh"
       ]
