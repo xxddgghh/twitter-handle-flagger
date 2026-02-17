@@ -168,6 +168,8 @@ article[data-testid="tweet"][data-flagged-handle] {
   justify-content: center;
   z-index: 10000;
   animation: fadeIn 0.2s ease;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -176,13 +178,23 @@ article[data-testid="tweet"][data-flagged-handle] {
 }
 
 .handle-flagger-dialog .dialog-content {
-  width: 400px;
-  max-width: 90vw;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
   background: var(--flagger-bg);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 32px var(--flagger-shadow);
   animation: slideUp 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.handle-flagger-dialog .dialog-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
 }
 
 @keyframes slideUp {
@@ -193,6 +205,244 @@ article[data-testid="tweet"][data-flagged-handle] {
   to { 
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE: Tablet (< 768px) ===== */
+@media (max-width: 768px) {
+  .handle-flagger-dialog {
+    padding: 12px;
+  }
+  
+  .handle-flagger-dialog .dialog-content {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 12px;
+  }
+  
+  .handle-flagger-dialog .dialog-body {
+    padding: 14px;
+  }
+  
+  .handle-flagger-dialog .dialog-header {
+    padding: 14px;
+  }
+  
+  .handle-flagger-dialog .dialog-header h3 {
+    font-size: 16px;
+  }
+  
+  .handle-flagger-dialog .category-option {
+    padding: 12px;
+    padding-right: 36px;
+  }
+  
+  .handle-flagger-dialog .snapshot-preview {
+    padding: 10px;
+  }
+  
+  .handle-flagger-dialog .snapshot-text {
+    font-size: 12px;
+    padding: 6px;
+  }
+  
+  .handle-flagger-dialog .snapshot-stats {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ===== RESPONSIVE: Mobile (< 480px) ===== */
+@media (max-width: 480px) {
+  .handle-flagger-dialog {
+    padding: 0;
+    align-items: flex-end; /* Slide up from bottom on mobile */
+  }
+  
+  .handle-flagger-dialog .dialog-content {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 20px 20px 0 0;
+    animation: slideUpMobile 0.25s ease;
+  }
+  
+  @keyframes slideUpMobile {
+    from { 
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .handle-flagger-dialog .dialog-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--flagger-border);
+    position: sticky;
+    top: 0;
+    background: var(--flagger-bg);
+    z-index: 10;
+  }
+  
+  /* Drag handle indicator for mobile */
+  .handle-flagger-dialog .dialog-header::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: var(--flagger-border);
+    border-radius: 2px;
+  }
+  
+  .handle-flagger-dialog .dialog-header h3 {
+    padding-top: 8px;
+  }
+  
+  .handle-flagger-dialog .dialog-body {
+    padding: 12px 16px 24px 16px; /* Extra bottom padding for safe area */
+  }
+  
+  .handle-flagger-dialog .dialog-body p {
+    font-size: 13px;
+  }
+  
+  /* Larger touch targets on mobile */
+  .handle-flagger-dialog .category-option {
+    padding: 14px 12px;
+    padding-right: 40px;
+    min-height: 48px;
+  }
+  
+  .handle-flagger-dialog .dialog-close {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+  
+  .handle-flagger-dialog .submit-report-btn {
+    padding: 14px 16px;
+    font-size: 16px;
+    min-height: 50px;
+  }
+  
+  .handle-flagger-dialog .copy-btn {
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+  
+  /* Condensed sections on mobile */
+  .handle-flagger-dialog .proof-section {
+    padding: 10px;
+  }
+  
+  .handle-flagger-dialog .grok-section {
+    padding: 10px;
+  }
+  
+  .handle-flagger-dialog .handle-picker-section {
+    padding: 10px;
+  }
+  
+  .handle-flagger-dialog .profile-info-section {
+    padding: 10px;
+  }
+  
+  /* Stack proof items vertically on small screens */
+  .handle-flagger-dialog .proof-item {
+    flex-wrap: wrap;
+  }
+  
+  .handle-flagger-dialog .proof-url {
+    width: 100%;
+    order: 2;
+    margin-top: 4px;
+  }
+  
+  /* Handle picker options - more touch-friendly */
+  .handle-flagger-dialog .handle-picker-option {
+    padding: 14px 12px;
+    min-height: 60px;
+  }
+  
+  .handle-flagger-dialog .picker-handle {
+    font-size: 16px;
+  }
+  
+  /* Profile card adjustments */
+  .handle-flagger-dialog .profile-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .handle-flagger-dialog .profile-stats {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  /* Textarea larger on mobile */
+  .handle-flagger-dialog .evidence-input,
+  .handle-flagger-dialog .grok-response-input {
+    min-height: 100px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  .handle-flagger-dialog .custom-handle-input,
+  .handle-flagger-dialog .handle-input {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* ===== RESPONSIVE: Very small screens (< 360px) ===== */
+@media (max-width: 360px) {
+  .handle-flagger-dialog .dialog-body {
+    padding: 10px 12px 20px 12px;
+  }
+  
+  .handle-flagger-dialog .category-options {
+    gap: 6px;
+  }
+  
+  .handle-flagger-dialog .category-option {
+    padding: 10px;
+    padding-right: 32px;
+  }
+  
+  .handle-flagger-dialog .category-label {
+    font-size: 13px;
+  }
+  
+  .handle-flagger-dialog .snapshot-stats {
+    font-size: 11px;
+  }
+}
+
+/* ===== LANDSCAPE MODE on mobile ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .handle-flagger-dialog {
+    padding: 8px;
+    align-items: center;
+  }
+  
+  .handle-flagger-dialog .dialog-content {
+    max-height: 95vh;
+    border-radius: 12px;
+  }
+  
+  .handle-flagger-dialog .dialog-header {
+    padding: 10px 14px;
+  }
+  
+  .handle-flagger-dialog .dialog-header::before {
+    display: none;
+  }
+  
+  .handle-flagger-dialog .dialog-body {
+    padding: 10px 14px;
   }
 }
 
@@ -228,10 +478,6 @@ article[data-testid="tweet"][data-flagged-handle] {
 
 .handle-flagger-dialog .dialog-close:hover {
   background: var(--flagger-border);
-}
-
-.handle-flagger-dialog .dialog-body {
-  padding: 16px;
 }
 
 .handle-flagger-dialog .dialog-body p {
@@ -504,6 +750,571 @@ article[data-testid="tweet"][data-flagged-handle] {
 
 .handle-flagger-dialog .archive-btn:hover {
   text-decoration: underline;
+}
+
+/* Handle Input Section */
+.handle-flagger-dialog .handle-input-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--flagger-border);
+  border-radius: 10px;
+}
+
+.handle-flagger-dialog .handle-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  margin-bottom: 8px;
+}
+
+.handle-flagger-dialog .handle-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--flagger-bg);
+  border: 2px solid var(--flagger-border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  transition: border-color 0.15s ease;
+}
+
+.handle-flagger-dialog .handle-input-wrapper:focus-within {
+  border-color: #1d9bf0;
+}
+
+.handle-flagger-dialog .handle-at {
+  color: var(--flagger-text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.handle-flagger-dialog .handle-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  padding: 6px 4px;
+  outline: none;
+}
+
+.handle-flagger-dialog .handle-input:read-only {
+  cursor: default;
+}
+
+.handle-flagger-dialog .handle-edit-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--flagger-border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-dialog .handle-edit-btn:hover {
+  background: var(--flagger-border);
+}
+
+.handle-flagger-dialog .handle-hint {
+  font-size: 11px;
+  color: var(--flagger-text-secondary);
+  margin: 8px 0 0 0;
+}
+
+/* Handle Dropdown */
+.handle-flagger-dialog .handle-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.handle-flagger-dialog .handle-input-section {
+  position: relative;
+}
+
+.handle-flagger-dialog .handle-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.handle-flagger-dialog .handle-dropdown-item:hover {
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.handle-flagger-dialog .handle-dropdown-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.handle-flagger-dialog .handle-dropdown-item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.handle-flagger-dialog .handle-dropdown-item:only-child {
+  border-radius: 8px;
+}
+
+.handle-flagger-dialog .dropdown-handle {
+  font-weight: 600;
+  color: var(--flagger-text);
+  font-size: 13px;
+}
+
+.handle-flagger-dialog .dropdown-category {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Grok Section */
+.handle-flagger-dialog .grok-section {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.03) 0%, rgba(29, 155, 240, 0.05) 100%);
+  border: 1px solid rgba(29, 155, 240, 0.2);
+  border-radius: 12px;
+}
+
+.handle-flagger-dialog .grok-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  margin-bottom: 8px;
+}
+
+.handle-flagger-dialog .grok-instructions {
+  font-size: 12px;
+  color: var(--flagger-text-secondary);
+  margin: 0 0 10px 0;
+}
+
+.handle-flagger-dialog .grok-instructions em {
+  color: var(--flagger-text);
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-style: normal;
+}
+
+.handle-flagger-dialog .ask-grok-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-dialog .ask-grok-btn:hover {
+  background: #333333;
+  transform: scale(1.02);
+}
+
+.handle-flagger-dialog .grok-response {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--flagger-text);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.handle-flagger-dialog .grok-response:focus {
+  outline: none;
+  border-color: #1d9bf0;
+}
+
+.handle-flagger-dialog .grok-response::placeholder {
+  color: var(--flagger-text-secondary);
+}
+
+/* Profile Card Section */
+.handle-flagger-dialog .profile-card-section {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.05) 0%, rgba(29, 155, 240, 0.02) 100%);
+  border: 1px solid rgba(29, 155, 240, 0.2);
+  border-radius: 12px;
+}
+
+.handle-flagger-dialog .profile-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  margin-bottom: 12px;
+}
+
+.handle-flagger-dialog .profile-status {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .profile-card {
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.handle-flagger-dialog .profile-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.handle-flagger-dialog .profile-avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--flagger-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.handle-flagger-dialog .profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.handle-flagger-dialog .profile-avatar-placeholder {
+  font-size: 24px;
+  color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .profile-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.handle-flagger-dialog .profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.handle-flagger-dialog .profile-display-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--flagger-text);
+}
+
+.handle-flagger-dialog .profile-verified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #1d9bf0;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.handle-flagger-dialog .profile-handle {
+  display: block;
+  color: var(--flagger-text-secondary);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.handle-flagger-dialog .profile-bio {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.handle-flagger-dialog .profile-bio-text {
+  font-size: 13px;
+  color: var(--flagger-text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.handle-flagger-dialog .profile-stats-row {
+  display: flex;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--flagger-border);
+}
+
+.handle-flagger-dialog .profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.handle-flagger-dialog .profile-stat-value {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--flagger-text);
+}
+
+.handle-flagger-dialog .profile-stat-label {
+  font-size: 11px;
+  color: var(--flagger-text-secondary);
+}
+
+/* Profile Actions */
+.handle-flagger-dialog .profile-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--flagger-border);
+}
+
+.handle-flagger-dialog .view-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: rgba(29, 155, 240, 0.1);
+  color: #1d9bf0;
+  border: 1px solid rgba(29, 155, 240, 0.3);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.handle-flagger-dialog .view-profile-btn:hover {
+  background: rgba(29, 155, 240, 0.2);
+  border-color: #1d9bf0;
+}
+
+/* Handle Picker Section (for retweets/quotes) */
+.handle-flagger-dialog .handle-picker-section {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+  border: 2px solid rgba(255, 152, 0, 0.3);
+  border-radius: 12px;
+}
+
+.handle-flagger-dialog .section-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--flagger-text);
+  margin-bottom: 6px;
+}
+
+.handle-flagger-dialog .section-label .required {
+  color: #dc3545;
+}
+
+.handle-flagger-dialog .picker-hint {
+  font-size: 12px;
+  color: var(--flagger-text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.handle-flagger-dialog .handle-picker-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.handle-flagger-dialog .handle-picker-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--flagger-bg);
+  border: 2px solid var(--flagger-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.handle-flagger-dialog .handle-picker-option:hover {
+  border-color: var(--flagger-text-secondary);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.handle-flagger-dialog .handle-picker-option.selected,
+.handle-flagger-dialog .handle-picker-option:has(input:checked) {
+  border-color: #ff9800;
+  background: rgba(255, 152, 0, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
+}
+
+.handle-flagger-dialog .handle-picker-option input {
+  display: none;
+}
+
+.handle-flagger-dialog .picker-option-content {
+  flex: 1;
+}
+
+.handle-flagger-dialog .picker-handle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--flagger-text);
+  margin-bottom: 2px;
+}
+
+.handle-flagger-dialog .picker-role {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff9800;
+  margin-bottom: 2px;
+}
+
+.handle-flagger-dialog .picker-desc {
+  font-size: 11px;
+  color: var(--flagger-text-secondary);
+}
+
+.handle-flagger-dialog .picker-check {
+  display: none;
+  width: 24px;
+  height: 24px;
+  background: #ff9800;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+}
+
+.handle-flagger-dialog .handle-picker-option.selected .picker-check,
+.handle-flagger-dialog .handle-picker-option:has(input:checked) .picker-check {
+  display: flex;
+}
+
+/* Add Another Handle Option */
+.handle-flagger-dialog .add-handle-option {
+  border-style: dashed;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.handle-flagger-dialog .add-handle-option .picker-handle {
+  color: #1d9bf0;
+}
+
+.handle-flagger-dialog .add-handle-option .picker-role {
+  color: var(--flagger-text-secondary);
+  font-weight: 400;
+}
+
+.handle-flagger-dialog .add-handle-option.selected,
+.handle-flagger-dialog .add-handle-option:has(input:checked) {
+  border-color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.08);
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.15);
+}
+
+.handle-flagger-dialog .add-handle-option .picker-check {
+  background: #1d9bf0;
+}
+
+/* Custom Handle Input Section */
+.handle-flagger-dialog .custom-handle-section {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(29, 155, 240, 0.05);
+  border: 1px solid rgba(29, 155, 240, 0.2);
+  border-radius: 8px;
+}
+
+.handle-flagger-dialog .custom-handle-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--flagger-text);
+  padding: 6px 4px;
+  outline: none;
+}
+
+.handle-flagger-dialog .custom-dropdown {
+  position: absolute;
+  top: calc(100% - 24px); /* Position below input, above hint */
+  left: 0;
+  right: 0;
+  background: var(--flagger-bg);
+  border: 1px solid var(--flagger-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  display: none;
+}
+
+.handle-flagger-dialog .custom-dropdown .handle-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.handle-flagger-dialog .custom-dropdown .handle-dropdown-item:hover {
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.handle-flagger-dialog .custom-dropdown .dropdown-handle {
+  font-weight: 600;
+  color: var(--flagger-text);
+  font-size: 13px;
+}
+
+.handle-flagger-dialog .custom-dropdown .dropdown-category {
+  font-size: 10px;
+  font-weight: 500;
 }
 
 /* Animation for newly flagged tweets */

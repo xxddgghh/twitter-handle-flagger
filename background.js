@@ -224,6 +224,43 @@ async function submitReport(handle, category, evidence = '') {
   return issueUrl;
 }
 
+// Note: Twitter doesn't include profile data in HTML - it's loaded via JS/API
+// We can only reliably get data from the tweet DOM itself
+// This function is kept for future use if we find a working method
+async function fetchTwitterProfile(handle) {
+  console.log('ℹ️ Profile fetch skipped - Twitter loads data via API, not in HTML');
+  
+  // Return empty profile - data will come from tweet DOM instead
+  return {
+    bio: '',
+    followers: '',
+    following: '',
+    followersCount: 0,
+    followingCount: 0,
+    joinDate: '',
+    location: '',
+    website: ''
+  };
+}
+
+// Format large numbers with K/M suffix
+function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return num.toString();
+}
+
+// Decode JSON escaped string
+function decodeJsonString(str) {
+  try {
+    return JSON.parse('"' + str + '"');
+  } catch (e) {
+    return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, code) => 
+      String.fromCharCode(parseInt(code, 16))
+    ).replace(/\\n/g, ' ').replace(/\\"/g, '"');
+  }
+}
+
 // Message listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.action) {
@@ -272,6 +309,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'submitReport':
       submitReport(request.handle, request.category, request.evidence)
         .then(url => sendResponse({ url }))
+        .catch(error => sendResponse({ error: error.message }));
+      return true;
+      
+    case 'fetchProfile':
+      fetchTwitterProfile(request.handle)
+        .then(profile => sendResponse({ profile }))
         .catch(error => sendResponse({ error: error.message }));
       return true;
   }
