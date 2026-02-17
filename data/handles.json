@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-17T00:49:47.161Z",
+  "lastUpdated": "2026-02-17T06:55:52.223Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -296,6 +296,14 @@
       "category": "propaganda",
       "reportCount": 1,
       "addedAt": "2026-02-17T00:49:47.160Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "namitabalyan": {
+      "category": "paid_promoter",
+      "reportCount": 1,
+      "addedAt": "2026-02-17T06:55:52.222Z",
       "reporters": [
         "xxddgghh"
       ]
