@@ -8,18 +8,11 @@
 
   // ===== Configuration =====
   const CONFIG = {
-    // GitHub repository info
     githubRepo: 'xxddgghh/twitter-handle-flagger',
-    
-    // API URLs
     handlesUrl: 'https://raw.githubusercontent.com/xxddgghh/twitter-handle-flagger/main/data/handles.json',
     issuesApiUrl: 'https://api.github.com/search/issues',
-    
-    // Cache settings
-    cacheExpiry: 5 * 60 * 1000, // 5 minutes
+    cacheExpiry: 5 * 60 * 1000,
     maxRecentSearches: 5,
-    
-    // Pagination
     issuesPerPage: 10
   };
 
@@ -28,54 +21,59 @@
   let currentHandle = null;
   let currentPage = 1;
   let totalIssues = 0;
+  let allIssues = [];
 
   // ===== DOM Elements =====
   const elements = {
+    // Theme
     themeToggle: document.getElementById('themeToggle'),
+    // Hero
+    heroSection: document.getElementById('heroSection'),
     searchInput: document.getElementById('searchInput'),
     searchClear: document.getElementById('searchClear'),
     searchDropdown: document.getElementById('searchDropdown'),
     recentSearches: document.getElementById('recentSearches'),
     recentTags: document.getElementById('recentTags'),
-    resultsSection: document.getElementById('resultsSection'),
-    emptyState: document.getElementById('emptyState'),
-    loadingState: document.getElementById('loadingState'),
-    profileCard: document.getElementById('profileCard'),
-    notFoundState: document.getElementById('notFoundState'),
-    feedbackSection: document.getElementById('feedbackSection'),
-    reportsList: document.getElementById('reportsList'),
-    reportsPagination: document.getElementById('reportsPagination'),
-    loadMoreBtn: document.getElementById('loadMoreBtn'),
-    // Stats
     totalHandles: document.getElementById('totalHandles'),
     totalCategories: document.getElementById('totalCategories'),
-    totalReports: document.getElementById('totalReports'),
-    // Profile elements
+    // Results
+    resultsSection: document.getElementById('resultsSection'),
+    backBtn: document.getElementById('backBtn'),
+    miniSearchInput: document.getElementById('miniSearchInput'),
+    loadingState: document.getElementById('loadingState'),
+    // Profile
+    profileSection: document.getElementById('profileSection'),
     profileAvatar: document.getElementById('profileAvatar'),
     profileHandle: document.getElementById('profileHandle'),
     profileLink: document.getElementById('profileLink'),
-    profileBadges: document.getElementById('profileBadges'),
+    profileStatus: document.getElementById('profileStatus'),
     reportCount: document.getElementById('reportCount'),
     firstFlagged: document.getElementById('firstFlagged'),
     lastReport: document.getElementById('lastReport'),
-    // Not found
+    // Not Found
+    notFoundSection: document.getElementById('notFoundSection'),
     notFoundHandle: document.getElementById('notFoundHandle'),
-    reportBtn: document.getElementById('reportBtn')
+    reportBtn: document.getElementById('reportBtn'),
+    // Reports
+    reportsSection: document.getElementById('reportsSection'),
+    reportsCount: document.getElementById('reportsCount'),
+    reportsList: document.getElementById('reportsList'),
+    reportsPagination: document.getElementById('reportsPagination'),
+    loadMoreBtn: document.getElementById('loadMoreBtn')
   };
 
   // ===== Theme Management =====
   function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
   }
 
   function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
   }
 
   // ===== Cache Management =====
@@ -83,7 +81,6 @@
     try {
       const cached = localStorage.getItem(key);
       if (!cached) return null;
-      
       const { data, timestamp } = JSON.parse(cached);
       if (Date.now() - timestamp > CONFIG.cacheExpiry) {
         localStorage.removeItem(key);
@@ -97,13 +94,9 @@
 
   function setCachedData(key, data) {
     try {
-      localStorage.setItem(key, JSON.stringify({
-        data,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
     } catch (e) {
-      // localStorage full or disabled
-      console.warn('Failed to cache data:', e);
+      console.warn('Cache failed:', e);
     }
   }
 
@@ -119,8 +112,7 @@
   function addRecentSearch(handle) {
     const recent = getRecentSearches().filter(h => h !== handle);
     recent.unshift(handle);
-    const trimmed = recent.slice(0, CONFIG.maxRecentSearches);
-    localStorage.setItem('recentSearches', JSON.stringify(trimmed));
+    localStorage.setItem('recentSearches', JSON.stringify(recent.slice(0, CONFIG.maxRecentSearches)));
     renderRecentSearches();
   }
 
@@ -132,7 +124,6 @@
 
   function renderRecentSearches() {
     const recent = getRecentSearches();
-    
     if (recent.length === 0) {
       elements.recentSearches.classList.remove('visible');
       return;
@@ -146,7 +137,6 @@
       </div>
     `).join('');
     
-    // Add click handlers
     elements.recentTags.querySelectorAll('.recent-tag').forEach(tag => {
       tag.addEventListener('click', (e) => {
         if (e.target.classList.contains('recent-tag-remove')) {
@@ -162,25 +152,23 @@
 
   // ===== Data Fetching =====
   async function fetchHandlesDatabase() {
-    // Check cache first
     const cached = getCachedData('handlesDatabase');
     if (cached) {
       handlesDatabase = cached;
-      updateOverviewStats();
+      updateHeroStats();
       return cached;
     }
     
     try {
       const response = await fetch(CONFIG.handlesUrl);
-      if (!response.ok) throw new Error('Failed to fetch handles database');
-      
+      if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       handlesDatabase = data;
       setCachedData('handlesDatabase', data);
-      updateOverviewStats();
+      updateHeroStats();
       return data;
     } catch (error) {
-      console.error('Error fetching handles database:', error);
+      console.error('Error fetching handles:', error);
       return null;
     }
   }
@@ -197,7 +185,6 @@
       const response = await fetch(url);
       if (!response.ok) {
         if (response.status === 403) {
-          console.warn('GitHub API rate limit reached');
           return { items: [], total_count: 0, rate_limited: true };
         }
         throw new Error('Failed to fetch issues');
@@ -212,14 +199,35 @@
     }
   }
 
-  // ===== Search Functionality =====
+  // ===== Search =====
+  function filterHandles(query) {
+    if (!handlesDatabase || !query) return [];
+    
+    const normalizedQuery = query.toLowerCase().replace('@', '');
+    const matches = [];
+    
+    for (const [handle, info] of Object.entries(handlesDatabase.handles)) {
+      if (handle.includes(normalizedQuery)) {
+        matches.push({ handle, info });
+      }
+    }
+    
+    matches.sort((a, b) => {
+      if (a.handle === normalizedQuery) return -1;
+      if (b.handle === normalizedQuery) return 1;
+      return a.handle.indexOf(normalizedQuery) - b.handle.indexOf(normalizedQuery);
+    });
+    
+    return matches;
+  }
+
   function showDropdown(handles) {
     if (!handles || handles.length === 0) {
       elements.searchDropdown.classList.remove('visible');
       return;
     }
     
-    elements.searchDropdown.innerHTML = handles.slice(0, 10).map(({ handle, info }) => {
+    elements.searchDropdown.innerHTML = handles.slice(0, 8).map(({ handle, info }) => {
       const category = handlesDatabase?.categories[info.category];
       return `
         <div class="dropdown-item" data-handle="${handle}">
@@ -235,37 +243,13 @@
     
     elements.searchDropdown.classList.add('visible');
     
-    // Add click handlers
     elements.searchDropdown.querySelectorAll('.dropdown-item').forEach(item => {
       item.addEventListener('click', () => {
-        const handle = item.dataset.handle;
-        elements.searchInput.value = handle;
+        elements.searchInput.value = item.dataset.handle;
         elements.searchDropdown.classList.remove('visible');
-        searchHandle(handle);
+        searchHandle(item.dataset.handle);
       });
     });
-  }
-
-  function filterHandles(query) {
-    if (!handlesDatabase || !query) return [];
-    
-    const normalizedQuery = query.toLowerCase().replace('@', '');
-    const matches = [];
-    
-    for (const [handle, info] of Object.entries(handlesDatabase.handles)) {
-      if (handle.includes(normalizedQuery)) {
-        matches.push({ handle, info });
-      }
-    }
-    
-    // Sort by relevance (exact match first, then by position)
-    matches.sort((a, b) => {
-      if (a.handle === normalizedQuery) return -1;
-      if (b.handle === normalizedQuery) return 1;
-      return a.handle.indexOf(normalizedQuery) - b.handle.indexOf(normalizedQuery);
-    });
-    
-    return matches;
   }
 
   async function searchHandle(handle) {
@@ -274,11 +258,13 @@
     const normalizedHandle = handle.toLowerCase().replace('@', '');
     currentHandle = normalizedHandle;
     currentPage = 1;
+    allIssues = [];
     
     // Update URL
     history.pushState(null, '', `?handle=${normalizedHandle}`);
     
-    // Show loading state
+    // Switch to results view
+    showResultsView();
     showState('loading');
     
     // Ensure database is loaded
@@ -289,196 +275,150 @@
     // Check if handle exists in database
     const handleInfo = handlesDatabase?.handles[normalizedHandle];
     
-    // Fetch issues regardless of whether handle is in database
+    // Fetch issues
     const issuesData = await fetchIssuesForHandle(normalizedHandle);
     totalIssues = issuesData.total_count || 0;
+    allIssues = issuesData.items || [];
     
     if (handleInfo) {
-      // Handle is flagged - show profile card
       addRecentSearch(normalizedHandle);
-      renderProfileCard(normalizedHandle, handleInfo);
-      renderReports(issuesData.items);
+      renderProfile(normalizedHandle, handleInfo);
+      renderReports(allIssues);
       showState('found');
-    } else if (issuesData.items.length > 0) {
-      // Handle has reports but not yet in database (pending)
+    } else if (allIssues.length > 0) {
       addRecentSearch(normalizedHandle);
       renderPendingProfile(normalizedHandle, issuesData);
-      renderReports(issuesData.items);
+      renderReports(allIssues);
       showState('found');
     } else {
-      // Handle not found
       renderNotFound(normalizedHandle);
       showState('notFound');
     }
   }
 
-  // ===== Rendering =====
+  // ===== View Management =====
+  function showHeroView() {
+    elements.heroSection.classList.remove('hidden');
+    elements.resultsSection.classList.add('hidden');
+    history.pushState(null, '', window.location.pathname);
+  }
+
+  function showResultsView() {
+    elements.heroSection.classList.add('hidden');
+    elements.resultsSection.classList.remove('hidden');
+  }
+
   function showState(state) {
-    elements.emptyState.classList.add('hidden');
     elements.loadingState.classList.add('hidden');
-    elements.profileCard.classList.add('hidden');
-    elements.notFoundState.classList.add('hidden');
-    elements.feedbackSection.classList.add('hidden');
+    elements.profileSection.classList.add('hidden');
+    elements.notFoundSection.classList.add('hidden');
+    elements.reportsSection.classList.add('hidden');
     
     switch (state) {
-      case 'empty':
-        elements.emptyState.classList.remove('hidden');
-        break;
       case 'loading':
         elements.loadingState.classList.remove('hidden');
         break;
       case 'found':
-        elements.profileCard.classList.remove('hidden');
-        elements.feedbackSection.classList.remove('hidden');
+        elements.profileSection.classList.remove('hidden');
+        elements.reportsSection.classList.remove('hidden');
         break;
       case 'notFound':
-        elements.notFoundState.classList.remove('hidden');
+        elements.notFoundSection.classList.remove('hidden');
         break;
     }
   }
 
-  function updateOverviewStats() {
+  function updateHeroStats() {
     if (!handlesDatabase) return;
-    
-    const handleCount = Object.keys(handlesDatabase.handles).length;
-    const categoryCount = Object.keys(handlesDatabase.categories).length;
-    const totalReportCount = Object.values(handlesDatabase.handles)
-      .reduce((sum, h) => sum + (h.reportCount || 1), 0);
-    
-    elements.totalHandles.textContent = handleCount;
-    elements.totalCategories.textContent = categoryCount;
-    elements.totalReports.textContent = totalReportCount;
+    elements.totalHandles.textContent = Object.keys(handlesDatabase.handles).length;
+    elements.totalCategories.textContent = Object.keys(handlesDatabase.categories).length;
   }
 
-  function renderProfileCard(handle, info) {
+  // ===== Rendering =====
+  function renderProfile(handle, info) {
     const category = handlesDatabase?.categories[info.category];
     
-    // Avatar (use Twitter's CDN)
-    elements.profileAvatar.src = `https://unavatar.io/twitter/${handle}`;
-    elements.profileAvatar.onerror = () => {
-      elements.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23536471"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>';
-    };
-    
-    // Handle and link
-    elements.profileHandle.textContent = `@${handle}`;
-    elements.profileLink.href = `https://x.com/${handle}`;
-    
-    // Badges
-    if (category) {
-      elements.profileBadges.innerHTML = `
-        <span class="badge" style="background: ${category.bgColor}; color: ${category.color}; border: 1px solid ${category.borderColor};">
-          <span class="badge-dot" style="background: ${category.color};"></span>
-          ${category.label}
-        </span>
-      `;
-    } else {
-      elements.profileBadges.innerHTML = '';
-    }
-    
-    // Stats
-    elements.reportCount.textContent = info.reportCount || 1;
-    elements.firstFlagged.textContent = info.addedAt ? formatDate(info.addedAt) : '-';
-    elements.lastReport.textContent = '-'; // Will be updated from issues
-  }
-
-  function renderPendingProfile(handle, issuesData) {
     // Avatar
     elements.profileAvatar.src = `https://unavatar.io/twitter/${handle}`;
     elements.profileAvatar.onerror = () => {
       elements.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23536471"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>';
     };
     
-    // Handle and link
+    // Handle info
     elements.profileHandle.textContent = `@${handle}`;
     elements.profileLink.href = `https://x.com/${handle}`;
     
-    // Pending badge
-    elements.profileBadges.innerHTML = `
-      <span class="badge" style="background: rgba(255, 173, 31, 0.15); color: #ffad1f; border: 1px solid #ffad1f;">
-        <span class="badge-dot" style="background: #ffad1f;"></span>
-        Pending Review
-      </span>
-    `;
+    // Status badge
+    if (category) {
+      elements.profileStatus.innerHTML = `
+        <div class="status-badge" style="background: ${category.bgColor}; border: 2px solid ${category.borderColor};">
+          <span class="status-badge-dot" style="background: ${category.color};"></span>
+          <div>
+            <div class="status-badge-label" style="color: ${category.color};">${category.label}</div>
+            <div class="status-badge-description">${category.description || ''}</div>
+          </div>
+        </div>
+      `;
+    }
     
     // Stats
+    elements.reportCount.textContent = info.reportCount || 1;
+    elements.firstFlagged.textContent = info.addedAt ? formatDate(info.addedAt) : '-';
+    elements.lastReport.textContent = '-';
+  }
+
+  function renderPendingProfile(handle, issuesData) {
+    elements.profileAvatar.src = `https://unavatar.io/twitter/${handle}`;
+    elements.profileAvatar.onerror = () => {
+      elements.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23536471"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>';
+    };
+    
+    elements.profileHandle.textContent = `@${handle}`;
+    elements.profileLink.href = `https://x.com/${handle}`;
+    
+    elements.profileStatus.innerHTML = `
+      <div class="status-badge" style="background: rgba(255, 173, 31, 0.15); border: 2px solid #ffad1f;">
+        <span class="status-badge-dot" style="background: #ffad1f;"></span>
+        <div>
+          <div class="status-badge-label" style="color: #ffad1f;">Pending Review</div>
+          <div class="status-badge-description">Reports submitted, awaiting threshold for confirmation</div>
+        </div>
+      </div>
+    `;
+    
     elements.reportCount.textContent = issuesData.total_count || 0;
     elements.firstFlagged.textContent = '-';
-    if (issuesData.items.length > 0) {
-      elements.lastReport.textContent = formatDate(issuesData.items[0].created_at);
-    }
+    elements.lastReport.textContent = issuesData.items.length > 0 ? formatDate(issuesData.items[0].created_at) : '-';
   }
 
   function renderNotFound(handle) {
     elements.notFoundHandle.textContent = `@${handle}`;
-    elements.reportBtn.href = `https://github.com/${CONFIG.githubRepo}/issues/new?title=${encodeURIComponent(`[REPORT] @${handle} - category`)}&body=${encodeURIComponent(`## Report for @${handle}\n\n**Category:** (choose: paid_promoter, propaganda, anti_india, pro_bharat)\n\n**Evidence:**\n\n`)}`;
+    elements.reportBtn.href = `https://github.com/${CONFIG.githubRepo}/issues/new?title=${encodeURIComponent(`[REPORT] @${handle} - category`)}&body=${encodeURIComponent(`## Report for @${handle}\n\n**Category:** (paid_promoter, propaganda, anti_india, pro_bharat)\n\n**Evidence:**\n\n`)}`;
   }
 
   function renderReports(issues) {
+    elements.reportsCount.textContent = `${totalIssues} report${totalIssues !== 1 ? 's' : ''}`;
+    
     if (!issues || issues.length === 0) {
       elements.reportsList.innerHTML = `
         <div class="report-card">
-          <p style="text-align: center; color: var(--text-secondary);">No detailed reports found. Check GitHub for more information.</p>
+          <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+            No detailed reports available yet.
+          </p>
         </div>
       `;
       elements.reportsPagination.classList.add('hidden');
       return;
     }
     
-    elements.reportsList.innerHTML = issues.map(issue => {
-      // Extract category from labels or title
-      const categoryLabel = issue.labels.find(l => 
-        ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending'].includes(l.name)
-      );
-      
-      // Extract snippet from body
-      let snippet = issue.body || '';
-      // Try to get the "Evidence/Notes" section
-      const evidenceMatch = snippet.match(/### Evidence.*?\n([\s\S]*?)(?=\n##|$)/i);
-      if (evidenceMatch) {
-        snippet = evidenceMatch[1].trim();
-      }
-      snippet = snippet.slice(0, 200) + (snippet.length > 200 ? '...' : '');
-      
-      const category = categoryLabel ? handlesDatabase?.categories[categoryLabel.name] : null;
-      
-      return `
-        <div class="report-card">
-          <div class="report-header">
-            <div class="report-meta">
-              <img src="https://github.com/${issue.user.login}.png?size=48" alt="${issue.user.login}" class="reporter-avatar">
-              <span class="reporter-name">${issue.user.login}</span>
-              <span class="report-date">${formatDate(issue.created_at)}</span>
-            </div>
-            ${category ? `
-              <span class="report-category" style="background: ${category.bgColor}; color: ${category.color};">
-                ${category.label}
-              </span>
-            ` : categoryLabel ? `
-              <span class="report-category" style="background: rgba(255, 173, 31, 0.15); color: #ffad1f;">
-                ${categoryLabel.name}
-              </span>
-            ` : ''}
-          </div>
-          ${snippet ? `
-            <div class="report-content">
-              <blockquote>${escapeHtml(snippet)}</blockquote>
-            </div>
-          ` : ''}
-          <div class="report-footer">
-            <a href="${issue.html_url}" target="_blank" rel="noopener" class="report-link">
-              View full report →
-            </a>
-          </div>
-        </div>
-      `;
-    }).join('');
+    elements.reportsList.innerHTML = issues.map(issue => renderReportCard(issue)).join('');
     
     // Update last report date
     if (issues.length > 0) {
       elements.lastReport.textContent = formatDate(issues[0].created_at);
     }
     
-    // Show/hide pagination
+    // Pagination
     if (totalIssues > currentPage * CONFIG.issuesPerPage) {
       elements.reportsPagination.classList.remove('hidden');
     } else {
@@ -486,7 +426,109 @@
     }
   }
 
-  // ===== Utility Functions =====
+  function renderReportCard(issue) {
+    // Extract category
+    const categoryLabel = issue.labels.find(l => 
+      ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending', 'verified'].includes(l.name)
+    );
+    const category = categoryLabel ? handlesDatabase?.categories[categoryLabel.name] : null;
+    
+    // Parse issue body for structured data
+    const parsed = parseIssueBody(issue.body || '');
+    
+    return `
+      <div class="report-card">
+        <div class="report-header">
+          <div class="report-meta">
+            <img src="https://github.com/${issue.user.login}.png?size=72" alt="${issue.user.login}" class="reporter-avatar">
+            <div class="reporter-info">
+              <span class="reporter-name">${issue.user.login}</span>
+              <span class="report-date">${formatDate(issue.created_at)}</span>
+            </div>
+          </div>
+          ${category ? `
+            <span class="report-category" style="background: ${category.bgColor}; color: ${category.color}; border: 1px solid ${category.borderColor};">
+              ${category.label}
+            </span>
+          ` : categoryLabel ? `
+            <span class="report-category" style="background: rgba(255, 173, 31, 0.15); color: #ffad1f; border: 1px solid #ffad1f;">
+              ${categoryLabel.name}
+            </span>
+          ` : ''}
+        </div>
+        
+        <div class="report-content">
+          ${parsed.evidence ? `
+            <div class="report-evidence">${escapeHtml(parsed.evidence)}</div>
+          ` : ''}
+          
+          ${parsed.tweetText || parsed.tweetUrl ? `
+            <div class="report-tweet-preview">
+              <div class="tweet-label">Reported Tweet</div>
+              ${parsed.tweetText ? `<div class="tweet-text">"${escapeHtml(parsed.tweetText)}"</div>` : ''}
+              ${parsed.tweetUrl ? `
+                <a href="${parsed.tweetUrl}" target="_blank" rel="noopener" class="tweet-link">
+                  View original tweet →
+                </a>
+              ` : ''}
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="report-footer">
+          <a href="${issue.html_url}" target="_blank" rel="noopener" class="report-link">
+            View full report on GitHub →
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  function parseIssueBody(body) {
+    const result = {
+      evidence: '',
+      tweetText: '',
+      tweetUrl: '',
+      grokAnalysis: ''
+    };
+    
+    // Extract evidence/notes
+    const evidenceMatch = body.match(/###?\s*(?:Evidence|Reporter's Notes|Notes)[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
+    if (evidenceMatch) {
+      result.evidence = evidenceMatch[1].trim().slice(0, 300);
+      if (evidenceMatch[1].trim().length > 300) result.evidence += '...';
+    }
+    
+    // Extract tweet text
+    const tweetTextMatch = body.match(/###?\s*Tweet Content[\s\S]*?>\s*([\s\S]*?)(?=\n##|\n###|$)/i);
+    if (tweetTextMatch) {
+      result.tweetText = tweetTextMatch[1].trim().slice(0, 200);
+      if (tweetTextMatch[1].trim().length > 200) result.tweetText += '...';
+    }
+    
+    // Extract tweet URL
+    const tweetUrlMatch = body.match(/\*\*Tweet URL:\*\*\s*(https:\/\/(?:twitter\.com|x\.com)\/[^\s\n]+)/i);
+    if (tweetUrlMatch) {
+      result.tweetUrl = tweetUrlMatch[1];
+    }
+    
+    // Extract Grok analysis
+    const grokMatch = body.match(/###?\s*(?:Grok's (?:Opinion|Analysis))[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
+    if (grokMatch) {
+      result.grokAnalysis = grokMatch[1].trim().slice(0, 200);
+    }
+    
+    // Fallback: use first meaningful text
+    if (!result.evidence && !result.tweetText) {
+      const fallback = body.replace(/#+\s*[^\n]+\n/g, '').trim();
+      result.evidence = fallback.slice(0, 200);
+      if (fallback.length > 200) result.evidence += '...';
+    }
+    
+    return result;
+  }
+
+  // ===== Utilities =====
   function formatDate(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -495,15 +537,11 @@
     
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
     
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   function escapeHtml(text) {
@@ -526,22 +564,17 @@
     elements.themeToggle.addEventListener('click', toggleTheme);
     
     // Search input
-    elements.searchInput.addEventListener('input', debounce((e) => {
-      const query = e.target.value.trim();
-      
-      // Show/hide clear button
+    const handleSearch = debounce((query) => {
       elements.searchClear.classList.toggle('visible', query.length > 0);
-      
-      // Show dropdown with matches
       if (query.length > 0) {
-        const matches = filterHandles(query);
-        showDropdown(matches);
+        showDropdown(filterHandles(query));
       } else {
         elements.searchDropdown.classList.remove('visible');
       }
-    }, 150));
+    }, 150);
     
-    // Search on Enter
+    elements.searchInput.addEventListener('input', (e) => handleSearch(e.target.value.trim()));
+    
     elements.searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const query = elements.searchInput.value.trim();
@@ -559,8 +592,6 @@
       elements.searchInput.value = '';
       elements.searchClear.classList.remove('visible');
       elements.searchDropdown.classList.remove('visible');
-      showState('empty');
-      history.pushState(null, '', window.location.pathname);
     });
     
     // Close dropdown on outside click
@@ -570,7 +601,21 @@
       }
     });
     
-    // Load more reports
+    // Back button
+    elements.backBtn.addEventListener('click', showHeroView);
+    
+    // Mini search
+    elements.miniSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim();
+        if (query) {
+          searchHandle(query);
+          e.target.value = '';
+        }
+      }
+    });
+    
+    // Load more
     elements.loadMoreBtn.addEventListener('click', async () => {
       if (!currentHandle) return;
       
@@ -580,56 +625,15 @@
       
       const issuesData = await fetchIssuesForHandle(currentHandle, currentPage);
       
-      if (issuesData.items.length > 0) {
-        // Append new reports
-        const newReportsHtml = issuesData.items.map(issue => {
-          // Same rendering logic as renderReports
-          const categoryLabel = issue.labels.find(l => 
-            ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending'].includes(l.name)
-          );
-          let snippet = issue.body || '';
-          const evidenceMatch = snippet.match(/### Evidence.*?\n([\s\S]*?)(?=\n##|$)/i);
-          if (evidenceMatch) snippet = evidenceMatch[1].trim();
-          snippet = snippet.slice(0, 200) + (snippet.length > 200 ? '...' : '');
-          
-          const category = categoryLabel ? handlesDatabase?.categories[categoryLabel.name] : null;
-          
-          return `
-            <div class="report-card">
-              <div class="report-header">
-                <div class="report-meta">
-                  <img src="https://github.com/${issue.user.login}.png?size=48" alt="${issue.user.login}" class="reporter-avatar">
-                  <span class="reporter-name">${issue.user.login}</span>
-                  <span class="report-date">${formatDate(issue.created_at)}</span>
-                </div>
-                ${category ? `
-                  <span class="report-category" style="background: ${category.bgColor}; color: ${category.color};">
-                    ${category.label}
-                  </span>
-                ` : ''}
-              </div>
-              ${snippet ? `
-                <div class="report-content">
-                  <blockquote>${escapeHtml(snippet)}</blockquote>
-                </div>
-              ` : ''}
-              <div class="report-footer">
-                <a href="${issue.html_url}" target="_blank" rel="noopener" class="report-link">
-                  View full report →
-                </a>
-              </div>
-            </div>
-          `;
-        }).join('');
-        
-        elements.reportsList.insertAdjacentHTML('beforeend', newReportsHtml);
+      if (issuesData.items && issuesData.items.length > 0) {
+        allIssues = [...allIssues, ...issuesData.items];
+        const newHtml = issuesData.items.map(issue => renderReportCard(issue)).join('');
+        elements.reportsList.insertAdjacentHTML('beforeend', newHtml);
       }
       
-      // Update button
-      elements.loadMoreBtn.textContent = 'Load more reports';
+      elements.loadMoreBtn.innerHTML = 'Load more reports <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
       elements.loadMoreBtn.disabled = false;
       
-      // Hide if no more
       if (totalIssues <= currentPage * CONFIG.issuesPerPage) {
         elements.reportsPagination.classList.add('hidden');
       }
@@ -638,16 +642,9 @@
 
   // ===== Initialization =====
   async function init() {
-    // Initialize theme
     initTheme();
-    
-    // Setup event listeners
     setupEventListeners();
-    
-    // Load handles database
     await fetchHandlesDatabase();
-    
-    // Render recent searches
     renderRecentSearches();
     
     // Check for handle in URL
@@ -658,12 +655,10 @@
       elements.searchInput.value = handleParam;
       elements.searchClear.classList.add('visible');
       searchHandle(handleParam);
-    } else {
-      showState('empty');
     }
   }
 
-  // Start the app
+  // Start
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
