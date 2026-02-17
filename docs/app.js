@@ -13,7 +13,8 @@
     issuesApiUrl: 'https://api.github.com/search/issues',
     cacheExpiry: 5 * 60 * 1000,
     maxRecentSearches: 5,
-    issuesPerPage: 10
+    issuesPerPage: 10,
+    topProfilesCount: 10
   };
 
   // ===== State =====
@@ -22,26 +23,26 @@
   let currentPage = 1;
   let totalIssues = 0;
   let allIssues = [];
+  let profilesShown = CONFIG.topProfilesCount;
 
   // ===== DOM Elements =====
   const elements = {
-    // Theme
     themeToggle: document.getElementById('themeToggle'),
-    // Hero
     heroSection: document.getElementById('heroSection'),
     searchInput: document.getElementById('searchInput'),
     searchClear: document.getElementById('searchClear'),
     searchDropdown: document.getElementById('searchDropdown'),
     recentSearches: document.getElementById('recentSearches'),
     recentTags: document.getElementById('recentTags'),
+    categoriesAccordion: document.getElementById('categoriesAccordion'),
+    profilesList: document.getElementById('profilesList'),
+    viewAllBtn: document.getElementById('viewAllBtn'),
     totalHandles: document.getElementById('totalHandles'),
     totalCategories: document.getElementById('totalCategories'),
-    // Results
     resultsSection: document.getElementById('resultsSection'),
     backBtn: document.getElementById('backBtn'),
     miniSearchInput: document.getElementById('miniSearchInput'),
     loadingState: document.getElementById('loadingState'),
-    // Profile
     profileSection: document.getElementById('profileSection'),
     profileAvatar: document.getElementById('profileAvatar'),
     profileHandle: document.getElementById('profileHandle'),
@@ -50,11 +51,9 @@
     reportCount: document.getElementById('reportCount'),
     firstFlagged: document.getElementById('firstFlagged'),
     lastReport: document.getElementById('lastReport'),
-    // Not Found
     notFoundSection: document.getElementById('notFoundSection'),
     notFoundHandle: document.getElementById('notFoundHandle'),
     reportBtn: document.getElementById('reportBtn'),
-    // Reports
     reportsSection: document.getElementById('reportsSection'),
     reportsCount: document.getElementById('reportsCount'),
     reportsList: document.getElementById('reportsList'),
@@ -155,7 +154,7 @@
     const cached = getCachedData('handlesDatabase');
     if (cached) {
       handlesDatabase = cached;
-      updateHeroStats();
+      renderBrowseSection();
       return cached;
     }
     
@@ -165,10 +164,12 @@
       const data = await response.json();
       handlesDatabase = data;
       setCachedData('handlesDatabase', data);
-      updateHeroStats();
+      renderBrowseSection();
       return data;
     } catch (error) {
       console.error('Error fetching handles:', error);
+      elements.categoriesAccordion.innerHTML = '<div class="accordion-loading">Failed to load categories</div>';
+      elements.profilesList.innerHTML = '<div class="profiles-loading">Failed to load profiles</div>';
       return null;
     }
   }
@@ -197,6 +198,162 @@
       console.error('Error fetching issues:', error);
       return { items: [], total_count: 0 };
     }
+  }
+
+  // ===== Browse Section Rendering =====
+  function renderBrowseSection() {
+    if (!handlesDatabase) return;
+    
+    renderCategoriesAccordion();
+    renderTopProfiles();
+    updateHeroStats();
+  }
+
+  function renderCategoriesAccordion() {
+    if (!handlesDatabase) return;
+    
+    const categories = handlesDatabase.categories;
+    const handles = handlesDatabase.handles;
+    
+    // Group handles by category
+    const groupedHandles = {};
+    for (const [handle, info] of Object.entries(handles)) {
+      const cat = info.category;
+      if (!groupedHandles[cat]) {
+        groupedHandles[cat] = [];
+      }
+      groupedHandles[cat].push({ handle, ...info });
+    }
+    
+    // Sort handles within each category by report count
+    for (const cat of Object.keys(groupedHandles)) {
+      groupedHandles[cat].sort((a, b) => (b.reportCount || 1) - (a.reportCount || 1));
+    }
+    
+    // Render accordion
+    const accordionHtml = Object.entries(categories).map(([catId, catInfo]) => {
+      const catHandles = groupedHandles[catId] || [];
+      const count = catHandles.length;
+      
+      if (count === 0) return '';
+      
+      return `
+        <div class="accordion-item" data-category="${catId}">
+          <div class="accordion-header">
+            <div class="accordion-header-left">
+              <span class="category-dot" style="background: ${catInfo.color};"></span>
+              <span class="category-name">${catInfo.label}</span>
+              <span class="category-count">${count}</span>
+            </div>
+            <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="accordion-content">
+            <ul class="accordion-handle-list">
+              ${catHandles.slice(0, 10).map(h => `
+                <li class="accordion-handle-item" data-handle="${h.handle}">
+                  <img src="https://unavatar.io/twitter/${h.handle}" alt="${h.handle}" class="accordion-handle-avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23536471%22><circle cx=%2212%22 cy=%228%22 r=%224%22/><path d=%22M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z%22/></svg>'">
+                  <span class="accordion-handle-name">@${h.handle}</span>
+                  <span class="accordion-handle-reports">${h.reportCount || 1} reports</span>
+                </li>
+              `).join('')}
+              ${catHandles.length > 10 ? `
+                <li class="accordion-handle-item view-more" data-category="${catId}">
+                  <span class="accordion-handle-name" style="color: var(--accent-color);">View all ${catHandles.length} handles →</span>
+                </li>
+              ` : ''}
+            </ul>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    elements.categoriesAccordion.innerHTML = accordionHtml || '<div class="accordion-loading">No categories found</div>';
+    
+    // Add accordion toggle handlers
+    elements.categoriesAccordion.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.accordion-item');
+        item.classList.toggle('expanded');
+      });
+    });
+    
+    // Add handle click handlers
+    elements.categoriesAccordion.querySelectorAll('.accordion-handle-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const handle = item.dataset.handle;
+        if (handle) {
+          searchHandle(handle);
+        }
+      });
+    });
+  }
+
+  function renderTopProfiles() {
+    if (!handlesDatabase) return;
+    
+    // Get all handles sorted by report count
+    const sortedHandles = Object.entries(handlesDatabase.handles)
+      .map(([handle, info]) => ({ handle, ...info }))
+      .sort((a, b) => (b.reportCount || 1) - (a.reportCount || 1));
+    
+    const profilesToShow = sortedHandles.slice(0, profilesShown);
+    
+    if (profilesToShow.length === 0) {
+      elements.profilesList.innerHTML = '<div class="profiles-loading">No profiles flagged yet</div>';
+      elements.viewAllBtn.classList.add('hidden');
+      return;
+    }
+    
+    elements.profilesList.innerHTML = profilesToShow.map((profile, index) => {
+      const category = handlesDatabase.categories[profile.category];
+      const rank = index + 1;
+      const isTop3 = rank <= 3;
+      
+      return `
+        <div class="profile-item" data-handle="${profile.handle}">
+          <span class="profile-rank ${isTop3 ? 'top-3' : ''}">${rank}</span>
+          <img src="https://unavatar.io/twitter/${profile.handle}" alt="${profile.handle}" class="profile-item-avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23536471%22><circle cx=%2212%22 cy=%228%22 r=%224%22/><path d=%22M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z%22/></svg>'">
+          <div class="profile-item-info">
+            <div class="profile-item-handle">@${profile.handle}</div>
+            ${category ? `
+              <div class="profile-item-badge" style="background: ${category.bgColor}; color: ${category.color}; border: 1px solid ${category.borderColor};">
+                <span class="profile-item-badge-dot" style="background: ${category.color};"></span>
+                ${category.label}
+              </div>
+            ` : ''}
+          </div>
+          <div class="profile-item-stats">
+            <div class="profile-item-reports">${profile.reportCount || 1}</div>
+            <div class="profile-item-reports-label">reports</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    elements.profilesList.querySelectorAll('.profile-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const handle = item.dataset.handle;
+        if (handle) {
+          searchHandle(handle);
+        }
+      });
+    });
+    
+    // Show/hide view all button
+    if (sortedHandles.length > profilesShown) {
+      elements.viewAllBtn.classList.remove('hidden');
+    } else {
+      elements.viewAllBtn.classList.add('hidden');
+    }
+  }
+
+  function updateHeroStats() {
+    if (!handlesDatabase) return;
+    elements.totalHandles.textContent = Object.keys(handlesDatabase.handles).length;
+    elements.totalCategories.textContent = Object.keys(handlesDatabase.categories).length;
   }
 
   // ===== Search =====
@@ -260,22 +417,15 @@
     currentPage = 1;
     allIssues = [];
     
-    // Update URL
     history.pushState(null, '', `?handle=${normalizedHandle}`);
-    
-    // Switch to results view
     showResultsView();
     showState('loading');
     
-    // Ensure database is loaded
     if (!handlesDatabase) {
       await fetchHandlesDatabase();
     }
     
-    // Check if handle exists in database
     const handleInfo = handlesDatabase?.handles[normalizedHandle];
-    
-    // Fetch issues
     const issuesData = await fetchIssuesForHandle(normalizedHandle);
     totalIssues = issuesData.total_count || 0;
     allIssues = issuesData.items || [];
@@ -328,27 +478,18 @@
     }
   }
 
-  function updateHeroStats() {
-    if (!handlesDatabase) return;
-    elements.totalHandles.textContent = Object.keys(handlesDatabase.handles).length;
-    elements.totalCategories.textContent = Object.keys(handlesDatabase.categories).length;
-  }
-
-  // ===== Rendering =====
+  // ===== Profile Rendering =====
   function renderProfile(handle, info) {
     const category = handlesDatabase?.categories[info.category];
     
-    // Avatar
     elements.profileAvatar.src = `https://unavatar.io/twitter/${handle}`;
     elements.profileAvatar.onerror = () => {
       elements.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23536471"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>';
     };
     
-    // Handle info
     elements.profileHandle.textContent = `@${handle}`;
     elements.profileLink.href = `https://x.com/${handle}`;
     
-    // Status badge
     if (category) {
       elements.profileStatus.innerHTML = `
         <div class="status-badge" style="background: ${category.bgColor}; border: 2px solid ${category.borderColor};">
@@ -361,7 +502,6 @@
       `;
     }
     
-    // Stats
     elements.reportCount.textContent = info.reportCount || 1;
     elements.firstFlagged.textContent = info.addedAt ? formatDate(info.addedAt) : '-';
     elements.lastReport.textContent = '-';
@@ -413,12 +553,10 @@
     
     elements.reportsList.innerHTML = issues.map(issue => renderReportCard(issue)).join('');
     
-    // Update last report date
     if (issues.length > 0) {
       elements.lastReport.textContent = formatDate(issues[0].created_at);
     }
     
-    // Pagination
     if (totalIssues > currentPage * CONFIG.issuesPerPage) {
       elements.reportsPagination.classList.remove('hidden');
     } else {
@@ -427,13 +565,10 @@
   }
 
   function renderReportCard(issue) {
-    // Extract category
     const categoryLabel = issue.labels.find(l => 
       ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending', 'verified'].includes(l.name)
     );
     const category = categoryLabel ? handlesDatabase?.categories[categoryLabel.name] : null;
-    
-    // Parse issue body for structured data
     const parsed = parseIssueBody(issue.body || '');
     
     return `
@@ -485,40 +620,25 @@
   }
 
   function parseIssueBody(body) {
-    const result = {
-      evidence: '',
-      tweetText: '',
-      tweetUrl: '',
-      grokAnalysis: ''
-    };
+    const result = { evidence: '', tweetText: '', tweetUrl: '', grokAnalysis: '' };
     
-    // Extract evidence/notes
     const evidenceMatch = body.match(/###?\s*(?:Evidence|Reporter's Notes|Notes)[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
     if (evidenceMatch) {
       result.evidence = evidenceMatch[1].trim().slice(0, 300);
       if (evidenceMatch[1].trim().length > 300) result.evidence += '...';
     }
     
-    // Extract tweet text
     const tweetTextMatch = body.match(/###?\s*Tweet Content[\s\S]*?>\s*([\s\S]*?)(?=\n##|\n###|$)/i);
     if (tweetTextMatch) {
       result.tweetText = tweetTextMatch[1].trim().slice(0, 200);
       if (tweetTextMatch[1].trim().length > 200) result.tweetText += '...';
     }
     
-    // Extract tweet URL
     const tweetUrlMatch = body.match(/\*\*Tweet URL:\*\*\s*(https:\/\/(?:twitter\.com|x\.com)\/[^\s\n]+)/i);
     if (tweetUrlMatch) {
       result.tweetUrl = tweetUrlMatch[1];
     }
     
-    // Extract Grok analysis
-    const grokMatch = body.match(/###?\s*(?:Grok's (?:Opinion|Analysis))[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
-    if (grokMatch) {
-      result.grokAnalysis = grokMatch[1].trim().slice(0, 200);
-    }
-    
-    // Fallback: use first meaningful text
     if (!result.evidence && !result.tweetText) {
       const fallback = body.replace(/#+\s*[^\n]+\n/g, '').trim();
       result.evidence = fallback.slice(0, 200);
@@ -560,10 +680,8 @@
 
   // ===== Event Handlers =====
   function setupEventListeners() {
-    // Theme toggle
     elements.themeToggle.addEventListener('click', toggleTheme);
     
-    // Search input
     const handleSearch = debounce((query) => {
       elements.searchClear.classList.toggle('visible', query.length > 0);
       if (query.length > 0) {
@@ -587,24 +705,20 @@
       }
     });
     
-    // Clear search
     elements.searchClear.addEventListener('click', () => {
       elements.searchInput.value = '';
       elements.searchClear.classList.remove('visible');
       elements.searchDropdown.classList.remove('visible');
     });
     
-    // Close dropdown on outside click
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.search-container')) {
         elements.searchDropdown.classList.remove('visible');
       }
     });
     
-    // Back button
     elements.backBtn.addEventListener('click', showHeroView);
     
-    // Mini search
     elements.miniSearchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const query = e.target.value.trim();
@@ -615,7 +729,11 @@
       }
     });
     
-    // Load more
+    elements.viewAllBtn.addEventListener('click', () => {
+      profilesShown += 10;
+      renderTopProfiles();
+    });
+    
     elements.loadMoreBtn.addEventListener('click', async () => {
       if (!currentHandle) return;
       
@@ -647,7 +765,6 @@
     await fetchHandlesDatabase();
     renderRecentSearches();
     
-    // Check for handle in URL
     const urlParams = new URLSearchParams(window.location.search);
     const handleParam = urlParams.get('handle');
     
@@ -658,7 +775,6 @@
     }
   }
 
-  // Start
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

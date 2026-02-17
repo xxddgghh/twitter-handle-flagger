@@ -39,57 +39,99 @@
   <div class="container">
     <!-- Hero Section (shown initially) -->
     <section class="hero-section" id="heroSection">
-      <div class="hero-content">
+      <!-- Header -->
+      <header class="hero-header">
         <div class="hero-logo">
           <img src="assets/logo.svg" alt="Handle Flagger Logo" class="logo-img">
         </div>
         <h1 class="hero-title">Handle Transparency</h1>
         <p class="hero-subtitle">Community-driven accountability for Twitter/X</p>
-        
-        <!-- Search Box -->
-        <div class="hero-search">
-          <div class="search-container">
-            <div class="search-input-wrapper">
-              <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </header>
+
+      <!-- Search Box -->
+      <div class="hero-search">
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Search any Twitter handle..." 
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <button class="search-clear" id="searchClear" aria-label="Clear search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="Search any Twitter handle..." 
-                autocomplete="off"
-                spellcheck="false"
-              >
-              <button class="search-clear" id="searchClear" aria-label="Clear search">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-            <div class="search-dropdown" id="searchDropdown"></div>
+            </button>
           </div>
-          <p class="search-hint">Press Enter to search or select from suggestions</p>
+          <div class="search-dropdown" id="searchDropdown"></div>
         </div>
-        
-        <!-- Recent Searches -->
-        <div class="recent-searches" id="recentSearches">
-          <span class="recent-label">Recent:</span>
-          <div class="recent-tags" id="recentTags"></div>
+      </div>
+
+      <!-- Recent Searches -->
+      <div class="recent-searches" id="recentSearches">
+        <span class="recent-label">Recent:</span>
+        <div class="recent-tags" id="recentTags"></div>
+      </div>
+
+      <!-- Browse Section: Sidebar Layout -->
+      <div class="browse-section">
+        <!-- Left: Categories Accordion -->
+        <aside class="categories-sidebar">
+          <h2 class="sidebar-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Categories
+          </h2>
+          <div class="categories-accordion" id="categoriesAccordion">
+            <!-- Categories will be inserted here -->
+            <div class="accordion-loading">Loading categories...</div>
+          </div>
+        </aside>
+
+        <!-- Right: Top Profiles -->
+        <main class="profiles-main">
+          <h2 class="profiles-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            Top Flagged Profiles
+          </h2>
+          <div class="profiles-list" id="profilesList">
+            <!-- Profiles will be inserted here -->
+            <div class="profiles-loading">Loading profiles...</div>
+          </div>
+          <button class="view-all-btn hidden" id="viewAllBtn">
+            View all profiles
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </main>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-number" id="totalHandles">-</span>
+          <span class="hero-stat-label">Flagged Handles</span>
         </div>
-        
-        <!-- Quick Stats -->
-        <div class="hero-stats" id="heroStats">
-          <div class="hero-stat">
-            <span class="hero-stat-number" id="totalHandles">-</span>
-            <span class="hero-stat-label">Flagged Handles</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-number" id="totalCategories">-</span>
-            <span class="hero-stat-label">Categories</span>
-          </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-number" id="totalCategories">-</span>
+          <span class="hero-stat-label">Categories</span>
         </div>
       </div>
     </section>
@@ -134,10 +176,8 @@
             </div>
           </div>
           
-          <!-- Status Badge (Main) -->
-          <div class="profile-status" id="profileStatus">
-            <!-- Status will be injected here -->
-          </div>
+          <!-- Status Badge -->
+          <div class="profile-status" id="profileStatus"></div>
           
           <!-- Key Stats -->
           <div class="profile-key-stats">
@@ -214,9 +254,7 @@
           <span class="reports-count" id="reportsCount">0 reports</span>
         </div>
         
-        <div class="reports-list" id="reportsList">
-          <!-- Reports will be inserted here -->
-        </div>
+        <div class="reports-list" id="reportsList"></div>
         
         <div class="reports-pagination hidden" id="reportsPagination">
           <button class="load-more-btn" id="loadMoreBtn">
