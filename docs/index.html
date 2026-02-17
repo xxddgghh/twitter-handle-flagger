@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handle Transparency Dashboard</title>
+  <meta name="description" content="Search and view community reports on Twitter/X handles. See badges, categories, and feedback from the community.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  </button>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img src="assets/logo.svg" alt="Handle Flagger Logo" class="logo-img">
+        <div class="logo-text">
+          <h1>Handle Transparency</h1>
+          <p class="tagline">Community-driven accountability for Twitter/X</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search any Twitter handle..." 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button class="search-clear" id="searchClear" aria-label="Clear search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+      
+      <!-- Recent Searches -->
+      <div class="recent-searches" id="recentSearches">
+        <span class="recent-label">Recent:</span>
+        <div class="recent-tags" id="recentTags"></div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <main class="results-section" id="resultsSection">
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <h2>Search for a handle</h2>
+        <p>Enter a Twitter/X handle to see community reports and assigned categories</p>
+        
+        <!-- Stats Overview -->
+        <div class="stats-overview" id="statsOverview">
+          <div class="stat-card">
+            <span class="stat-number" id="totalHandles">-</span>
+            <span class="stat-label">Flagged Handles</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="totalCategories">-</span>
+            <span class="stat-label">Categories</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="totalReports">-</span>
+            <span class="stat-label">Total Reports</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state hidden" id="loadingState">
+        <div class="spinner"></div>
+        <p>Searching...</p>
+      </div>
+
+      <!-- Profile Card (hidden by default) -->
+      <div class="profile-card hidden" id="profileCard">
+        <div class="profile-header">
+          <img src="" alt="Profile Avatar" class="profile-avatar" id="profileAvatar">
+          <div class="profile-info">
+            <h2 class="profile-handle" id="profileHandle">@handle</h2>
+            <a href="#" class="profile-link" id="profileLink" target="_blank" rel="noopener">
+              View on Twitter →
+            </a>
+          </div>
+        </div>
+        
+        <!-- Badges -->
+        <div class="profile-badges" id="profileBadges">
+          <!-- Badges will be inserted here -->
+        </div>
+        
+        <!-- Stats -->
+        <div class="profile-stats">
+          <div class="stat">
+            <span class="stat-value" id="reportCount">0</span>
+            <span class="stat-label">Reports</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="firstFlagged">-</span>
+            <span class="stat-label">First Flagged</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="lastReport">-</span>
+            <span class="stat-label">Last Report</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Not Found State -->
+      <div class="not-found-state hidden" id="notFoundState">
+        <div class="not-found-icon">✨</div>
+        <h2>No reports found</h2>
+        <p>Good news! <strong id="notFoundHandle">@handle</strong> hasn't been flagged by the community.</p>
+        <p class="not-found-note">This doesn't mean the account is trustworthy - it just hasn't been reported yet.</p>
+        <a href="#" class="report-btn" id="reportBtn" target="_blank" rel="noopener">
+          🚩 Report this handle
+        </a>
+      </div>
+
+      <!-- Feedback/Reports Section -->
+      <section class="feedback-section hidden" id="feedbackSection">
+        <h3 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Community Reports
+        </h3>
+        
+        <div class="reports-list" id="reportsList">
+          <!-- Reports will be inserted here -->
+        </div>
+        
+        <div class="reports-pagination hidden" id="reportsPagination">
+          <button class="pagination-btn" id="loadMoreBtn">Load more reports</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p>
+          <strong>Handle Transparency Dashboard</strong> is part of the 
+          <a href="https://github.com/xxddgghh/twitter-handle-flagger" target="_blank" rel="noopener">Twitter Handle Flagger</a> 
+          open-source project.
+        </p>
+        <p class="footer-note">
+          All data is community-sourced. Reports do not constitute proof of wrongdoing.
+        </p>
+        <div class="footer-links">
+          <a href="https://github.com/xxddgghh/twitter-handle-flagger" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/xxddgghh/twitter-handle-flagger/issues" target="_blank" rel="noopener">View All Reports</a>
+          <a href="https://github.com/xxddgghh/twitter-handle-flagger/issues/new" target="_blank" rel="noopener">Submit Report</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="2"/>
+  
+  <!-- Flag pole -->
+  <rect x="35" y="25" width="4" height="70" rx="2" fill="currentColor"/>
+  
+  <!-- Flag -->
+  <path d="M39 25 C39 25, 50 30, 65 25 C80 20, 90 30, 90 30 L90 55 C90 55, 80 45, 65 50 C50 55, 39 50, 39 50 Z" fill="currentColor" fill-opacity="0.8"/>
+  
+  <!-- Magnifying glass -->
+  <circle cx="72" cy="72" r="18" fill="none" stroke="currentColor" stroke-width="4"/>
+  <line x1="85" y1="85" x2="98" y2="98" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Eye in magnifying glass (transparency symbol) -->
+  <ellipse cx="72" cy="72" rx="8" ry="5" fill="currentColor" fill-opacity="0.6"/>
+  <circle cx="72" cy="72" r="3" fill="currentColor"/>
+</svg>
