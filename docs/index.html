@@ -4,21 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Handle Transparency Dashboard</title>
-  <meta name="description" content="Search and view community reports on Twitter/X handles. See badges, categories, and feedback from the community.">
-  
-  <!-- Favicon -->
+  <meta name="description" content="Search and view community reports on Twitter/X handles.">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-  
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Theme toggle -->
   <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
     <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="5"></circle>
@@ -36,253 +29,144 @@
     </svg>
   </button>
 
-  <div class="container">
-    <!-- Hero Section (shown initially) -->
-    <section class="hero-section" id="heroSection">
+  <div class="page-container">
+    <!-- LANDING PAGE -->
+    <section class="landing-page" id="landingPage">
       <!-- Header -->
-      <header class="hero-header">
-        <div class="hero-logo">
-          <img src="assets/logo.svg" alt="Handle Flagger Logo" class="logo-img">
-        </div>
-        <h1 class="hero-title">Handle Transparency</h1>
-        <p class="hero-subtitle">Community-driven accountability for Twitter/X</p>
+      <header class="landing-header">
+        <img src="assets/logo.svg" alt="Logo" class="landing-logo">
+        <h1>Handle Transparency</h1>
+        <p>Community-driven accountability for Twitter/X</p>
       </header>
 
-      <!-- Search Box -->
-      <div class="hero-search">
-        <div class="search-container">
-          <div class="search-input-wrapper">
-            <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input 
-              type="text" 
-              id="searchInput" 
-              class="search-input" 
-              placeholder="Search any Twitter handle..." 
-              autocomplete="off"
-              spellcheck="false"
-            >
-            <button class="search-clear" id="searchClear" aria-label="Clear search">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-          <div class="search-dropdown" id="searchDropdown"></div>
+      <!-- Search -->
+      <div class="search-wrapper">
+        <div class="search-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search any Twitter handle..." autocomplete="off">
+          <button class="search-clear hidden" id="searchClear">×</button>
         </div>
+        <div class="search-dropdown hidden" id="searchDropdown"></div>
       </div>
 
       <!-- Recent Searches -->
-      <div class="recent-searches" id="recentSearches">
-        <span class="recent-label">Recent:</span>
-        <div class="recent-tags" id="recentTags"></div>
+      <div class="recent-searches hidden" id="recentSearches">
+        <span>Recent:</span>
+        <div id="recentTags"></div>
       </div>
 
-      <!-- Browse Section: Sidebar Layout -->
-      <div class="browse-section">
-        <!-- Left: Categories Accordion -->
-        <aside class="categories-sidebar">
-          <h2 class="sidebar-title">
+      <!-- Browse Grid -->
+      <div class="browse-grid">
+        <!-- Categories Panel -->
+        <div class="panel categories-panel">
+          <h2>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
             Categories
           </h2>
-          <div class="categories-accordion" id="categoriesAccordion">
-            <!-- Categories will be inserted here -->
-            <div class="accordion-loading">Loading categories...</div>
+          <div class="accordion" id="categoriesAccordion">
+            <div class="loading-text">Loading...</div>
           </div>
-        </aside>
+        </div>
 
-        <!-- Right: Top Profiles -->
-        <main class="profiles-main">
-          <h2 class="profiles-title">
+        <!-- Top Profiles Panel -->
+        <div class="panel profiles-panel">
+          <h2>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="8.5" cy="7" r="4"></circle>
-              <line x1="20" y1="8" x2="20" y2="14"></line>
-              <line x1="23" y1="11" x2="17" y2="11"></line>
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
             Top Flagged Profiles
           </h2>
           <div class="profiles-list" id="profilesList">
-            <!-- Profiles will be inserted here -->
-            <div class="profiles-loading">Loading profiles...</div>
+            <div class="loading-text">Loading...</div>
           </div>
-          <button class="view-all-btn hidden" id="viewAllBtn">
-            View all profiles
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
-        </main>
+          <button class="view-all-btn hidden" id="viewAllBtn">View more profiles →</button>
+        </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-number" id="totalHandles">-</span>
-          <span class="hero-stat-label">Flagged Handles</span>
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat">
+          <strong id="totalHandles">-</strong>
+          <span>Flagged Handles</span>
         </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-number" id="totalCategories">-</span>
-          <span class="hero-stat-label">Categories</span>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <strong id="totalCategories">-</strong>
+          <span>Categories</span>
         </div>
       </div>
     </section>
 
-    <!-- Results Section (shown after search) -->
-    <main class="results-section hidden" id="resultsSection">
-      <!-- Back Button & Mini Search -->
+    <!-- RESULTS PAGE -->
+    <section class="results-page hidden" id="resultsPage">
       <header class="results-header">
-        <button class="back-btn" id="backBtn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back
-        </button>
-        <div class="mini-search">
-          <input type="text" id="miniSearchInput" class="mini-search-input" placeholder="Search another handle...">
-        </div>
+        <button class="back-btn" id="backBtn">← Back</button>
+        <input type="text" id="miniSearch" class="mini-search" placeholder="Search another...">
       </header>
 
-      <!-- Loading State -->
-      <div class="loading-state hidden" id="loadingState">
+      <div class="loading hidden" id="loading">
         <div class="spinner"></div>
         <p>Searching...</p>
       </div>
 
       <!-- Profile Card -->
-      <div class="profile-section hidden" id="profileSection">
-        <div class="profile-card">
-          <div class="profile-main">
-            <img src="" alt="Profile Avatar" class="profile-avatar" id="profileAvatar">
-            <div class="profile-identity">
-              <h2 class="profile-handle" id="profileHandle">@handle</h2>
-              <a href="#" class="profile-twitter-link" id="profileLink" target="_blank" rel="noopener">
-                View on Twitter/X
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </a>
-            </div>
+      <div class="profile-card hidden" id="profileCard">
+        <div class="profile-top">
+          <img id="profileAvatar" src="" alt="Avatar" class="profile-avatar">
+          <div class="profile-info">
+            <h2 id="profileHandle">@handle</h2>
+            <a id="profileLink" href="#" target="_blank">View on Twitter →</a>
           </div>
-          
-          <!-- Status Badge -->
-          <div class="profile-status" id="profileStatus"></div>
-          
-          <!-- Key Stats -->
-          <div class="profile-key-stats">
-            <div class="key-stat">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                <line x1="4" y1="22" x2="4" y2="15"></line>
-              </svg>
-              <div class="key-stat-content">
-                <span class="key-stat-value" id="reportCount">0</span>
-                <span class="key-stat-label">Reports</span>
-              </div>
-            </div>
-            <div class="key-stat">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <div class="key-stat-content">
-                <span class="key-stat-value" id="firstFlagged">-</span>
-                <span class="key-stat-label">First Flagged</span>
-              </div>
-            </div>
-            <div class="key-stat">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              <div class="key-stat-content">
-                <span class="key-stat-value" id="lastReport">-</span>
-                <span class="key-stat-label">Last Report</span>
-              </div>
-            </div>
+        </div>
+        <div class="profile-badge" id="profileBadge"></div>
+        <div class="profile-stats">
+          <div class="pstat">
+            <strong id="reportCount">0</strong>
+            <span>Reports</span>
+          </div>
+          <div class="pstat">
+            <strong id="firstFlagged">-</strong>
+            <span>First Flagged</span>
+          </div>
+          <div class="pstat">
+            <strong id="lastReport">-</strong>
+            <span>Last Report</span>
           </div>
         </div>
       </div>
 
-      <!-- Not Found State -->
-      <div class="not-found-section hidden" id="notFoundSection">
-        <div class="not-found-card">
-          <div class="not-found-icon">✨</div>
-          <h2>No reports found</h2>
-          <p class="not-found-handle" id="notFoundHandle">@handle</p>
-          <p class="not-found-message">This account hasn't been flagged by the community yet.</p>
-          <div class="not-found-note">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            <span>This doesn't guarantee the account is trustworthy - it simply hasn't been reported.</span>
-          </div>
-          <a href="#" class="report-btn" id="reportBtn" target="_blank" rel="noopener">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-              <line x1="4" y1="22" x2="4" y2="15"></line>
-            </svg>
-            Report this handle
-          </a>
-        </div>
+      <!-- Not Found -->
+      <div class="not-found hidden" id="notFound">
+        <div class="nf-icon">✨</div>
+        <h2>No reports found</h2>
+        <p id="notFoundHandle">@handle</p>
+        <p class="nf-message">This account hasn't been flagged yet.</p>
+        <a id="reportBtn" href="#" class="report-btn" target="_blank">🚩 Report this handle</a>
       </div>
 
-      <!-- Reports Section -->
-      <section class="reports-section hidden" id="reportsSection">
-        <div class="section-header">
-          <h3 class="section-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            Community Reports
-          </h3>
-          <span class="reports-count" id="reportsCount">0 reports</span>
-        </div>
-        
-        <div class="reports-list" id="reportsList"></div>
-        
-        <div class="reports-pagination hidden" id="reportsPagination">
-          <button class="load-more-btn" id="loadMoreBtn">
-            Load more reports
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-        </div>
-      </section>
-    </main>
+      <!-- Reports -->
+      <div class="reports-section hidden" id="reportsSection">
+        <h3>Community Reports <span id="reportsCount"></span></h3>
+        <div id="reportsList"></div>
+        <button class="load-more hidden" id="loadMoreBtn">Load more</button>
+      </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="footer-content">
-        <p>
-          Part of the 
-          <a href="https://github.com/xxddgghh/twitter-handle-flagger" target="_blank" rel="noopener">Twitter Handle Flagger</a> 
-          open-source project
-        </p>
-        <p class="footer-disclaimer">
-          All data is community-sourced. Reports do not constitute proof.
-        </p>
-      </div>
+      <p>Part of <a href="https://github.com/xxddgghh/twitter-handle-flagger" target="_blank">Twitter Handle Flagger</a></p>
+      <p class="disclaimer">All data is community-sourced. Reports do not constitute proof.</p>
     </footer>
   </div>
 
-  <!-- Scripts -->
   <script src="app.js"></script>
 </body>
 </html>
