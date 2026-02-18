@@ -31,7 +31,21 @@
       "bgColor": "rgba(139, 0, 0, 0.15)",
       "borderColor": "#8B0000",
       "description": "Accounts promoting anti-India narratives or content"
-    }
+    },
+    "brown_sepoy": {
+        "label": "Brown Sepoy",
+        "color": "#8B4513",
+        "bgColor": "rgba(139, 69, 19, 0.15)",
+        "borderColor": "#8B4513",
+        "description": "Indians acting against national interest with colonial mindset"
+      },
+    "hypocrite": {
+        "label": "Liar / Hypocrite",
+        "color": "#4A4A4A",
+        "bgColor": "rgba(74, 74, 74, 0.15)",
+        "borderColor": "#4A4A4A",
+        "description": "Accounts with documented contradictory statements or false claims"
+      }
   },
   "handles": {
     "mrsinha": {
