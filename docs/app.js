@@ -161,16 +161,31 @@
   }
 
   async function fetchIssues(handle, page = 1) {
-    const key = `issues_${handle}_${page}`;
+    const key = `issues_${handle}_${page}_v2`; // v2 to invalidate old cache
     const cached = getCache(key);
     if (cached) return cached;
     try {
-      const q = encodeURIComponent(`repo:${CONFIG.githubRepo} @${handle} in:title is:issue`);
+      // Search for handle in title - format is "[REPORT] @handle - category"
+      const q = encodeURIComponent(`repo:${CONFIG.githubRepo} "@${handle}" in:title is:issue`);
       const res = await fetch(`${CONFIG.issuesApiUrl}?q=${q}&per_page=${CONFIG.perPage}&page=${page}&sort=created&order=desc`);
       if (!res.ok) return { items: [], total_count: 0 };
       const data = await res.json();
-      setCache(key, data);
-      return data;
+      
+      // Client-side filter to ensure only exact handle matches
+      // Title format: "[REPORT] @handle - category"
+      const handleLower = handle.toLowerCase();
+      const pattern = new RegExp(`\\[report\\]\\s*@${handleLower}\\s*-`, 'i');
+      
+      const filtered = data.items.filter(issue => {
+        return pattern.test(issue.title);
+      });
+      
+      const result = { 
+        items: filtered, 
+        total_count: filtered.length 
+      };
+      setCache(key, result);
+      return result;
     } catch {
       return { items: [], total_count: 0 };
     }
