@@ -45,8 +45,14 @@
     profileLink: $('profileLink'),
     profileBadge: $('profileBadge'),
     reportCount: $('reportCount'),
+    uniqueReporters: $('uniqueReporters'),
     firstFlagged: $('firstFlagged'),
     lastReport: $('lastReport'),
+    profileSummary: $('profileSummary'),
+    summaryText: $('summaryText'),
+    grokSection: $('grokSection'),
+    grokCount: $('grokCount'),
+    grokList: $('grokList'),
     notFound: $('notFound'),
     notFoundHandle: $('notFoundHandle'),
     reportBtn: $('reportBtn'),
@@ -330,7 +336,7 @@
 
     if (info) {
       addRecent(h);
-      renderProfile(h, info);
+      renderProfile(h, info, issues.items);
       renderReports(issues.items);
       showState('found');
     } else if (issues.items.length) {
@@ -361,17 +367,19 @@
     el.profileCard.classList.add('hidden');
     el.notFound.classList.add('hidden');
     el.reportsSection.classList.add('hidden');
+    el.grokSection.classList.add('hidden');
 
     if (state === 'loading') el.loading.classList.remove('hidden');
     if (state === 'found') {
       el.profileCard.classList.remove('hidden');
       el.reportsSection.classList.remove('hidden');
+      // grokSection visibility is handled by renderGrokOpinions
     }
     if (state === 'notfound') el.notFound.classList.remove('hidden');
   }
 
   // Render
-  function renderProfile(h, info) {
+  function renderProfile(h, info, issues = []) {
     const cat = db?.categories[info.category];
     el.profileAvatar.src = `https://unavatar.io/twitter/${h}`;
     el.profileAvatar.onerror = () => { el.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23657786"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>'; };
@@ -388,17 +396,34 @@
           </div>
         </div>
       `;
+      
+      // Show summary if category has description
+      if (cat.description) {
+        el.summaryText.textContent = cat.description;
+        el.profileSummary.classList.remove('hidden');
+      } else {
+        el.profileSummary.classList.add('hidden');
+      }
     } else {
       el.profileBadge.innerHTML = '';
+      el.profileSummary.classList.add('hidden');
     }
 
-    el.reportCount.textContent = info.reportCount || 1;
+    // Count unique reporters from issues
+    const uniqueUsers = new Set(issues.map(i => i.user?.login).filter(Boolean));
+    el.uniqueReporters.textContent = uniqueUsers.size || '-';
+    
+    el.reportCount.textContent = info.reportCount || totalIssues || 1;
     el.firstFlagged.textContent = info.addedAt ? formatDate(info.addedAt) : '-';
-    el.lastReport.textContent = '-';
+    el.lastReport.textContent = issues.length ? formatDate(issues[0].created_at) : '-';
+    
+    // Extract and render Grok opinions
+    renderGrokOpinions(issues);
   }
 
   function renderPendingProfile(h, issues) {
     el.profileAvatar.src = `https://unavatar.io/twitter/${h}`;
+    el.profileAvatar.onerror = () => { el.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23657786"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>'; };
     el.profileHandle.textContent = `@${h}`;
     el.profileLink.href = `https://x.com/${h}`;
     el.profileBadge.innerHTML = `
@@ -410,9 +435,60 @@
         </div>
       </div>
     `;
+    el.profileSummary.classList.add('hidden');
+    
+    // Count unique reporters
+    const uniqueUsers = new Set(issues.items.map(i => i.user?.login).filter(Boolean));
+    el.uniqueReporters.textContent = uniqueUsers.size || '-';
+    
     el.reportCount.textContent = issues.total_count || 0;
     el.firstFlagged.textContent = '-';
     el.lastReport.textContent = issues.items.length ? formatDate(issues.items[0].created_at) : '-';
+    
+    // Extract and render Grok opinions
+    renderGrokOpinions(issues.items);
+  }
+  
+  function renderGrokOpinions(issues) {
+    const grokOpinions = [];
+    
+    for (const issue of issues) {
+      const body = issue.body || '';
+      // Look for Grok's Opinion section in the report
+      const grokMatch = body.match(/###?\s*Grok'?s?\s*Opinion[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
+      if (grokMatch && grokMatch[1].trim()) {
+        grokOpinions.push({
+          text: grokMatch[1].trim().slice(0, 500) + (grokMatch[1].trim().length > 500 ? '...' : ''),
+          date: issue.created_at,
+          reporter: issue.user?.login,
+          url: issue.html_url
+        });
+      }
+    }
+    
+    if (!grokOpinions.length) {
+      el.grokSection.classList.add('hidden');
+      return;
+    }
+    
+    el.grokSection.classList.remove('hidden');
+    el.grokCount.textContent = `(${grokOpinions.length})`;
+    
+    el.grokList.innerHTML = grokOpinions.slice(0, 5).map(g => `
+      <div class="grok-card">
+        <div class="grok-card-header">
+          <span class="grok-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            Grok AI
+          </span>
+          <span class="grok-date">${formatDate(g.date)}</span>
+        </div>
+        <div class="grok-text">${escapeHtml(g.text)}</div>
+        <div class="grok-source">
+          <a href="${g.url}" target="_blank">From report by ${g.reporter} →</a>
+        </div>
+      </div>
+    `).join('');
   }
 
   function renderNotFound(h) {
@@ -444,8 +520,11 @@
                 <div class="report-date">${formatDate(issue.created_at)}</div>
               </div>
             </div>
-            ${cat ? `<span class="report-cat" style="background:${cat.bgColor};color:${cat.color};border:1px solid ${cat.borderColor}">${cat.label}</span>` : 
-                    catLabel ? `<span class="report-cat" style="background:rgba(255,173,31,0.15);color:#ffad1f;border:1px solid #ffad1f">${catLabel.name}</span>` : ''}
+            <div class="report-tags">
+              ${parsed.hasGrok ? `<span class="grok-tag">🤖 Grok</span>` : ''}
+              ${cat ? `<span class="report-cat" style="background:${cat.bgColor};color:${cat.color};border:1px solid ${cat.borderColor}">${cat.label}</span>` : 
+                      catLabel ? `<span class="report-cat" style="background:rgba(255,173,31,0.15);color:#ffad1f;border:1px solid #ffad1f">${catLabel.name}</span>` : ''}
+            </div>
           </div>
           <div class="report-body">
             ${parsed.evidence ? `<div class="report-evidence">${escapeHtml(parsed.evidence)}</div>` : ''}
@@ -472,7 +551,7 @@
   }
 
   function parseBody(body) {
-    const result = { evidence: '', tweetText: '', tweetUrl: '' };
+    const result = { evidence: '', tweetText: '', tweetUrl: '', hasGrok: false };
 
     const evMatch = body.match(/###?\s*(?:Evidence|Notes)[\s\S]*?\n([\s\S]*?)(?=\n##|$)/i);
     if (evMatch) result.evidence = evMatch[1].trim().slice(0, 250) + (evMatch[1].trim().length > 250 ? '...' : '');
@@ -482,6 +561,10 @@
 
     const urlMatch = body.match(/\*\*Tweet URL:\*\*\s*(https:\/\/(?:twitter\.com|x\.com)\/[^\s\n]+)/i);
     if (urlMatch) result.tweetUrl = urlMatch[1];
+    
+    // Check for Grok opinion
+    const grokMatch = body.match(/###?\s*Grok'?s?\s*Opinion/i);
+    result.hasGrok = !!grokMatch;
 
     if (!result.evidence && !result.tweetText) {
       const fb = body.replace(/#+[^\n]+\n/g, '').trim();

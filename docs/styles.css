@@ -646,8 +646,8 @@ a:hover { text-decoration: underline; }
 
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
 }
@@ -668,6 +668,118 @@ a:hover { text-decoration: underline; }
   font-size: 11px;
   color: var(--text-secondary);
   text-transform: uppercase;
+}
+
+.twitter-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.twitter-link:hover {
+  color: var(--accent);
+}
+
+/* Profile Summary */
+.profile-summary {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  border-left: 4px solid var(--accent);
+}
+
+.profile-summary h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.profile-summary p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ===== Grok Section ===== */
+.grok-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.grok-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.grok-section h3 svg {
+  color: var(--accent);
+}
+
+.grok-section h3 span {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.grok-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grok-card {
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  border-left: 4px solid #9b59b6;
+}
+
+.grok-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.grok-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9b59b6;
+  background: rgba(155, 89, 182, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.grok-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.grok-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.grok-source {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.grok-source a {
+  color: var(--text-muted);
 }
 
 /* ===== Not Found ===== */
@@ -774,11 +886,28 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
 }
 
+.report-tags {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .report-cat {
   font-size: 11px;
   padding: 4px 10px;
   border-radius: 20px;
   font-weight: 600;
+}
+
+.grok-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+  background: rgba(155, 89, 182, 0.15);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
 }
 
 .report-body {
@@ -885,7 +1014,7 @@ a:hover { text-decoration: underline; }
   }
   
   .profile-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .results-header {
@@ -900,5 +1029,11 @@ a:hover { text-decoration: underline; }
   .stat-divider {
     width: 60px;
     height: 1px;
+  }
+  
+  .grok-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 }
