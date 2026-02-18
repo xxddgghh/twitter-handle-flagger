@@ -521,7 +521,7 @@
     }
 
     el.reportsList.innerHTML = issues.map(issue => {
-      const catLabel = issue.labels.find(l => ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending'].includes(l.name));
+      const catLabel = issue.labels.find(l => ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'brown_sepoy', 'hypocrite', 'pending'].includes(l.name));
       const cat = catLabel ? db?.categories[catLabel.name] : null;
       const parsed = parseBody(issue.body || '');
 
@@ -674,7 +674,7 @@
       const issues = await fetchIssues(currentHandle, currentPage);
       if (issues.items.length) {
         el.reportsList.innerHTML += issues.items.map(issue => {
-          const catLabel = issue.labels.find(l => ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'pending'].includes(l.name));
+          const catLabel = issue.labels.find(l => ['paid_promoter', 'propaganda', 'anti_india', 'pro_bharat', 'brown_sepoy', 'hypocrite', 'pending'].includes(l.name));
           const cat = catLabel ? db?.categories[catLabel.name] : null;
           const parsed = parseBody(issue.body || '');
           return `
