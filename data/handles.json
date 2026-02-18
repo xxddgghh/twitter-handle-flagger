@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-18T05:24:57.080Z",
+  "lastUpdated": "2026-02-18T08:44:10.147Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -33,19 +33,19 @@
       "description": "Accounts promoting anti-India narratives or content"
     },
     "brown_sepoy": {
-        "label": "Brown Sepoy",
-        "color": "#8B4513",
-        "bgColor": "rgba(139, 69, 19, 0.15)",
-        "borderColor": "#8B4513",
-        "description": "Indians acting against national interest with colonial mindset"
-      },
+      "label": "Brown Sepoy",
+      "color": "#8B4513",
+      "bgColor": "rgba(139, 69, 19, 0.15)",
+      "borderColor": "#8B4513",
+      "description": "Indians acting against national interest with colonial mindset"
+    },
     "hypocrite": {
-        "label": "Liar / Hypocrite",
-        "color": "#4A4A4A",
-        "bgColor": "rgba(74, 74, 74, 0.15)",
-        "borderColor": "#4A4A4A",
-        "description": "Accounts with documented contradictory statements or false claims"
-      }
+      "label": "Liar / Hypocrite",
+      "color": "#4A4A4A",
+      "bgColor": "rgba(74, 74, 74, 0.15)",
+      "borderColor": "#4A4A4A",
+      "description": "Accounts with documented contradictory statements or false claims"
+    }
   },
   "handles": {
     "mrsinha": {
@@ -358,6 +358,14 @@
       "category": "propaganda",
       "reportCount": 1,
       "addedAt": "2026-02-18T05:24:57.080Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "nalin_haley": {
+      "category": "brown_sepoy",
+      "reportCount": 1,
+      "addedAt": "2026-02-18T08:44:10.146Z",
       "reporters": [
         "xxddgghh"
       ]
