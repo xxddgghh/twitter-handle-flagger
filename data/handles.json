@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-18T14:31:55.456Z",
+  "lastUpdated": "2026-02-18T17:32:54.963Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -376,6 +376,14 @@
       "addedAt": "2026-02-18T14:31:55.456Z",
       "reporters": [
         "xxddgghh"
+      ]
+    },
+    "mog_russen": {
+      "category": "propaganda",
+      "reportCount": 1,
+      "addedAt": "2026-02-18T17:32:54.963Z",
+      "reporters": [
+        "pareshkumar91"
       ]
     }
   },
