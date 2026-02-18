@@ -369,15 +369,14 @@
     addReportButton(tweetElement, handleInfo.handle);
   }
 
-  // Add category badge with tooltip to tweet
+  // Add category badge with link icon to tweet
   function addBadge(tweetElement, handleInfo) {
     // Check if badge already exists
     if (tweetElement.querySelector('.handle-flagger-badge-wrapper')) return;
     
     const { categoryInfo, handle, reportCount, addedAt } = handleInfo;
-    const addedDate = addedAt ? new Date(addedAt).toLocaleDateString() : 'Unknown';
     
-    // Create wrapper to hold both badge and tooltip
+    // Create wrapper to hold badge and link icon
     const wrapper = document.createElement('div');
     wrapper.className = 'handle-flagger-badge-wrapper';
     
@@ -401,21 +400,39 @@
       ${categoryInfo.label}
     `;
     
-    // Create simple tooltip
-    const tooltip = document.createElement('div');
-    tooltip.className = 'handle-flagger-tooltip';
+    // Create link icon (always visible, clickable) - links to Transparency Dashboard
+    const dashboardUrl = `https://xpose.world/?handle=${handle}`;
     
-    // GitHub search URL for reports about this handle
-    const githubReportsUrl = `https://github.com/xxddgghh/twitter-handle-flagger/issues?q=is%3Aissue+%40${handle}`;
-    
-    tooltip.innerHTML = `
-      <div class="hf-tooltip-content">
-        <a href="${githubReportsUrl}" target="_blank" style="color: ${categoryInfo.color};">Read more →</a>
-      </div>
+    const linkIcon = document.createElement('a');
+    linkIcon.className = 'handle-flagger-link-icon';
+    linkIcon.href = dashboardUrl;
+    linkIcon.target = '_blank';
+    linkIcon.title = `View profile for @${handle}`;
+    linkIcon.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-left: 4px;
+      color: ${categoryInfo.color};
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    `;
+    linkIcon.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
     `;
     
+    // Hover effect
+    linkIcon.addEventListener('mouseenter', () => linkIcon.style.opacity = '1');
+    linkIcon.addEventListener('mouseleave', () => linkIcon.style.opacity = '0.7');
+    
     wrapper.appendChild(badge);
-    wrapper.appendChild(tooltip);
+    wrapper.appendChild(linkIcon);
     
     // Find username element and append wrapper
     const userNameEl = tweetElement.querySelector('[data-testid="User-Name"]');
