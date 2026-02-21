@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-02-21T15:50:27.953Z",
+  "lastUpdated": "2026-02-21T15:54:02.907Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -92,6 +92,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-02-21T15:50:27.953Z"
+    },
+    "nalin_haley": {
+      "categories": {
+        "brown_sepoy": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-21T15:54:02.907Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T15:54:02.907Z"
     }
   },
   "pendingReports": {}
