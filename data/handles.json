@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "lastUpdated": "2026-02-21T08:26:55.611Z",
+  "version": "2.0.0",
+  "lastUpdated": "2026-02-21T08:30:00.000Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -49,366 +49,510 @@
   },
   "handles": {
     "mrsinha": {
-      "category": "paid_promoter",
-      "reportCount": 5,
+      "categories": {
+        "paid_promoter": {
+          "count": 5,
+          "reporters": ["legacy_migration"],
+          "firstReported": "2026-02-15T00:00:00Z"
+        }
+      },
+      "totalReports": 5,
       "addedAt": "2026-02-15T00:00:00Z"
     },
     "_sabanaqvi": {
-      "category": "anti_india",
-      "reportCount": 1,
+      "categories": {
+        "anti_india": {
+          "count": 1,
+          "reporters": ["legacy_migration"],
+          "firstReported": "2026-02-15T00:00:00Z"
+        }
+      },
+      "totalReports": 1,
       "addedAt": "2026-02-15T00:00:00Z"
     },
     "sagarikaghose": {
-      "category": "anti_india",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T09:00:32.733Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "anti_india": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T09:00:32.733Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T09:00:32.733Z"
     },
     "mrinalpande1": {
-      "category": "anti_india",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T09:06:15.324Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "anti_india": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T09:06:15.324Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T09:06:15.324Z"
     },
     "ajeetbharti": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T09:45:03.409Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T09:45:03.409Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T09:45:03.409Z"
     },
     "hashtag": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T09:50:49.783Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T09:50:49.783Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T09:50:49.783Z"
     },
     "talk2anuradha": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T10:05:15.303Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T10:05:15.303Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T10:05:15.303Z"
     },
     "harshmadhusudan": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T10:07:45.545Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T10:07:45.545Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T10:07:45.545Z"
     },
     "rahulroushan": {
-      "category": "paid_promoter",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T10:23:07.702Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "paid_promoter": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T10:23:07.702Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T10:23:07.702Z"
     },
     "hartoshsinghbal": {
-      "category": "anti_india",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T11:49:14.360Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "anti_india": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T11:49:14.360Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T11:49:14.360Z"
     },
     "manaman_chhina": {
-      "category": "anti_india",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T11:52:05.191Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "anti_india": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T11:52:05.191Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T11:52:05.191Z"
     },
     "prvkhvr": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T11:58:42.091Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T11:58:42.091Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T11:58:42.091Z"
     },
     "neetivaan": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:01:09.835Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:01:09.835Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:01:09.835Z"
     },
     "dig_raw21": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:13:33.542Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:13:33.542Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:13:33.542Z"
     },
     "thehawkeyex": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:33:36.176Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:33:36.176Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:33:36.176Z"
     },
     "theskindoctor13": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:35:31.078Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:35:31.078Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:35:31.078Z"
     },
     "mehharshil": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:41:06.936Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:41:06.936Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:41:06.936Z"
     },
     "jsaideepak": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T12:41:41.265Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T12:41:41.265Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T12:41:41.265Z"
     },
     "khurpenchh": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T13:44:58.581Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T13:44:58.581Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T13:44:58.581Z"
     },
     "ranvirshorey": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-15T14:56:32.908Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-15T14:56:32.908Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-15T14:56:32.908Z"
     },
     "tvmohandaspai": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T05:34:22.107Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T05:34:22.107Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T05:34:22.107Z"
     },
     "befittingfacts": {
-      "category": "paid_promoter",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T05:46:22.550Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "paid_promoter": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T05:46:22.550Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T05:46:22.550Z"
     },
     "kushal_mehra": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T05:59:49.367Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T05:59:49.367Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T05:59:49.367Z"
     },
     "aravind": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T06:53:43.869Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T06:53:43.869Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T06:53:43.869Z"
     },
     "prachyam7": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T06:56:11.886Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T06:56:11.886Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T06:56:11.886Z"
     },
     "mumukshusavitri": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T07:06:33.909Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T07:06:33.909Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T07:06:33.909Z"
     },
     "jix5a": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T07:10:07.929Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T07:10:07.929Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T07:10:07.929Z"
     },
     "hphobiawatch": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T07:18:50.637Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T07:18:50.637Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T07:18:50.637Z"
     },
     "sagasofbharat": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T08:44:46.385Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T08:44:46.385Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T08:44:46.385Z"
     },
     "the_lama_singh": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T10:26:35.509Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T10:26:35.509Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T10:26:35.509Z"
     },
     "caleb_friesen": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T10:41:04.644Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T10:41:04.644Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T10:41:04.644Z"
     },
     "agentsaffron": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T17:40:47.221Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T17:40:47.221Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T17:40:47.221Z"
     },
     "itsck47": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-16T17:46:24.691Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-16T17:46:24.691Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-16T17:46:24.691Z"
     },
     "dhanyarajendran": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T00:49:47.160Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T00:49:47.160Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T00:49:47.160Z"
     },
     "namitabalyan": {
-      "category": "paid_promoter",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T06:55:52.222Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "paid_promoter": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T06:55:52.222Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T06:55:52.222Z"
     },
     "atrineeraj": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T07:07:10.782Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T07:07:10.782Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T07:07:10.782Z"
     },
     "jaipurdialogues": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T08:30:48.957Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T08:30:48.957Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T08:30:48.957Z"
     },
     "masijeevi": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T13:27:17.416Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T13:27:17.416Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T13:27:17.416Z"
     },
     "svembu": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-17T14:59:42.358Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-17T14:59:42.358Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-17T14:59:42.358Z"
     },
     "th_anonymouse": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-18T05:24:57.080Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-18T05:24:57.080Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-18T05:24:57.080Z"
     },
     "nalin_haley": {
-      "category": "brown_sepoy",
-      "reportCount": 1,
-      "addedAt": "2026-02-18T08:44:10.146Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "brown_sepoy": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-18T08:44:10.146Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-18T08:44:10.146Z"
     },
     "manipurpost5": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-18T14:31:55.456Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-18T14:31:55.456Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-18T14:31:55.456Z"
     },
     "mog_russen": {
-      "category": "propaganda",
-      "reportCount": 1,
-      "addedAt": "2026-02-18T17:32:54.963Z",
-      "reporters": [
-        "pareshkumar91"
-      ]
+      "categories": {
+        "propaganda": {
+          "count": 1,
+          "reporters": ["pareshkumar91"],
+          "firstReported": "2026-02-18T17:32:54.963Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-18T17:32:54.963Z"
     },
     "maharshii": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-21T07:33:01.174Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-21T07:33:01.174Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T07:33:01.174Z"
     },
     "sadhgurujv": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-21T08:17:59.620Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-21T08:17:59.620Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T08:17:59.620Z"
     },
     "ajaykraina": {
-      "category": "pro_bharat",
-      "reportCount": 1,
-      "addedAt": "2026-02-21T08:26:55.610Z",
-      "reporters": [
-        "xxddgghh"
-      ]
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": ["xxddgghh"],
+          "firstReported": "2026-02-21T08:26:55.610Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T08:26:55.610Z"
     }
   },
   "pendingReports": {}
