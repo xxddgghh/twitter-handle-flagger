@@ -7,6 +7,7 @@
   const CONFIG = {
     githubRepo: 'xxddgghh/twitter-handle-flagger',
     handlesUrl: 'https://raw.githubusercontent.com/xxddgghh/twitter-handle-flagger/main/data/handles.json',
+    summariesUrl: 'https://raw.githubusercontent.com/xxddgghh/twitter-handle-flagger/main/data/summaries.json',
     issuesApiUrl: 'https://api.github.com/search/issues',
     cacheExpiry: 5 * 60 * 1000,
     maxRecent: 5,
@@ -15,6 +16,7 @@
   };
 
   let db = null;
+  let summaries = null;
   let currentHandle = null;
   let currentPage = 1;
   let totalIssues = 0;
@@ -96,7 +98,13 @@
     reportsSection: $('reportsSection'),
     reportsCount: $('reportsCount'),
     reportsList: $('reportsList'),
-    loadMoreBtn: $('loadMoreBtn')
+    loadMoreBtn: $('loadMoreBtn'),
+    aiSummarySection: $('aiSummarySection'),
+    aiSummaryContent: $('aiSummaryContent'),
+    aiSummaryMeta: $('aiSummaryMeta'),
+    grokVerifyLink: $('grokVerifyLink'),
+    reportStatsSection: $('reportStatsSection'),
+    reportStatsContent: $('reportStatsContent')
   };
 
   // Theme
@@ -194,6 +202,22 @@
     } catch {
       el.categoriesAccordion.innerHTML = '<div class="loading-text">Failed to load</div>';
       el.profilesList.innerHTML = '<div class="loading-text">Failed to load</div>';
+    }
+  }
+
+  async function fetchSummaries() {
+    const cached = getCache('summaries');
+    if (cached) {
+      summaries = cached;
+      return;
+    }
+    try {
+      const res = await fetch(CONFIG.summariesUrl);
+      if (!res.ok) throw new Error();
+      summaries = await res.json();
+      setCache('summaries', summaries);
+    } catch {
+      summaries = {};
     }
   }
 
@@ -434,12 +458,14 @@
     el.notFound.classList.add('hidden');
     el.reportsSection.classList.add('hidden');
     el.grokSection.classList.add('hidden');
+    el.aiSummarySection.classList.add('hidden');
+    el.reportStatsSection.classList.add('hidden');
 
     if (state === 'loading') el.loading.classList.remove('hidden');
     if (state === 'found') {
       el.profileCard.classList.remove('hidden');
       el.reportsSection.classList.remove('hidden');
-      // grokSection visibility is handled by renderGrokOpinions
+      // Other sections visibility is handled by their render functions
     }
     if (state === 'notfound') el.notFound.classList.remove('hidden');
   }
@@ -519,6 +545,12 @@
     
     // Extract and render Grok opinions
     renderGrokOpinions(issues);
+    
+    // Render AI summary if available
+    renderAiSummary(h);
+    
+    // Render report statistics
+    renderReportStats(h, info, issues);
   }
 
   function renderPendingProfile(h, issues) {
@@ -589,6 +621,140 @@
         </div>
       </div>
     `).join('');
+  }
+
+  function renderAiSummary(h) {
+    const summary = summaries?.[h];
+    
+    if (!summary || !summary.summary) {
+      el.aiSummarySection.classList.add('hidden');
+      return;
+    }
+    
+    el.aiSummarySection.classList.remove('hidden');
+    el.aiSummaryContent.innerHTML = `<p>${escapeHtml(summary.summary)}</p>`;
+    
+    if (summary.grokVerifyLink) {
+      el.grokVerifyLink.href = summary.grokVerifyLink;
+      el.grokVerifyLink.classList.remove('hidden');
+    } else {
+      el.grokVerifyLink.classList.add('hidden');
+    }
+    
+    const generatedDate = summary.generatedAt ? formatDate(summary.generatedAt) : 'Unknown';
+    el.aiSummaryMeta.innerHTML = `
+      <span class="ai-summary-date">Generated: ${generatedDate}</span>
+      <span class="ai-summary-basis">Based on ${summary.reportCount || 0} reports</span>
+    `;
+  }
+
+  function renderReportStats(h, info, issues) {
+    const sortedCategories = getSortedCategories(info);
+    const totalReports = info.totalReports || 0;
+    
+    const userNotes = [];
+    const tweetUrls = {};
+    
+    for (const issue of issues) {
+      const body = issue.body || '';
+      
+      const notesMatch = body.match(/###?\s*(?:Additional\s*)?Notes?\s*\n([\s\S]*?)(?=\n##|$)/i);
+      if (notesMatch && notesMatch[1].trim() && notesMatch[1].trim() !== '-') {
+        const note = notesMatch[1].trim().slice(0, 200);
+        if (note.length > 5) {
+          const catMatch = issue.title.match(/-\s*(\w+)/);
+          userNotes.push({
+            note,
+            category: catMatch ? catMatch[1] : 'unknown',
+            reporter: issue.user?.login
+          });
+        }
+      }
+      
+      const urlMatches = body.match(/https?:\/\/(?:twitter\.com|x\.com)\/\w+\/status\/\d+/gi);
+      if (urlMatches) {
+        urlMatches.forEach(url => {
+          tweetUrls[url] = (tweetUrls[url] || 0) + 1;
+        });
+      }
+    }
+    
+    const repeatedTweets = Object.entries(tweetUrls)
+      .filter(([url, count]) => count > 1)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    
+    let html = `
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value">${totalReports}</div>
+          <div class="stat-label">Total Reports</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">${sortedCategories.length}</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">${userNotes.length}</div>
+          <div class="stat-label">User Notes</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">${repeatedTweets.length}</div>
+          <div class="stat-label">Repeated Tweets</div>
+        </div>
+      </div>
+    `;
+    
+    if (sortedCategories.length > 0) {
+      html += `
+        <div class="stats-section">
+          <h4>Categories Reported Under</h4>
+          <ul class="stats-list">
+            ${sortedCategories.map(cat => {
+              const catInfo = db?.categories[cat.id];
+              const pct = totalReports > 0 ? Math.round((cat.count / totalReports) * 100) : 0;
+              return `<li><span class="stats-dot" style="background:${catInfo?.color || '#666'}"></span>${catInfo?.label || cat.id}: ${cat.count} reports (${pct}%)</li>`;
+            }).join('')}
+          </ul>
+        </div>
+      `;
+    }
+    
+    if (userNotes.length > 0) {
+      html += `
+        <div class="stats-section">
+          <h4>User Notes (${userNotes.length})</h4>
+          <ul class="stats-notes">
+            ${userNotes.slice(0, 5).map(n => `
+              <li>
+                <span class="note-category">[${n.category}]</span>
+                <span class="note-text">"${escapeHtml(n.note)}"</span>
+              </li>
+            `).join('')}
+            ${userNotes.length > 5 ? `<li class="more-notes">+ ${userNotes.length - 5} more notes</li>` : ''}
+          </ul>
+        </div>
+      `;
+    }
+    
+    if (repeatedTweets.length > 0) {
+      html += `
+        <div class="stats-section">
+          <h4>Tweets Reported Multiple Times</h4>
+          <ul class="stats-tweets">
+            ${repeatedTweets.map(([url, count]) => `
+              <li>
+                <a href="${url}" target="_blank">${url.split('/').pop()}</a>
+                <span class="tweet-count">(${count}x)</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+    }
+    
+    el.reportStatsContent.innerHTML = html;
+    el.reportStatsSection.classList.remove('hidden');
   }
 
   function renderNotFound(h) {
@@ -795,7 +961,7 @@
   async function init() {
     initTheme();
     setupEvents();
-    await fetchDB();
+    await Promise.all([fetchDB(), fetchSummaries()]);
     renderRecent();
 
     const params = new URLSearchParams(location.search);
