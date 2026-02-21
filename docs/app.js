@@ -212,7 +212,8 @@
       return;
     }
     try {
-      const res = await fetch(CONFIG.summariesUrl);
+      // Add cache buster to bypass GitHub CDN cache
+      const res = await fetch(CONFIG.summariesUrl + '?t=' + Date.now());
       if (!res.ok) throw new Error();
       summaries = await res.json();
       setCache('summaries', summaries);
@@ -624,12 +625,15 @@
   }
 
   function renderAiSummary(h) {
+    console.log('renderAiSummary called for:', h, 'summaries:', summaries);
     const summary = summaries?.[h];
     
     if (!summary || !summary.summary) {
+      console.log('No summary found for', h);
       el.aiSummarySection.classList.add('hidden');
       return;
     }
+    console.log('Found summary:', summary);
     
     el.aiSummarySection.classList.remove('hidden');
     el.aiSummaryContent.innerHTML = `<p>${escapeHtml(summary.summary)}</p>`;
