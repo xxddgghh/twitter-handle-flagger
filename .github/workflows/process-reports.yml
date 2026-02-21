@@ -190,4 +190,5 @@ jobs:
           git config --local user.name "Xpose Bot"
           git add data/handles.json
           git diff --staged --quiet || git commit -m "📊 Update handles database [automated]"
+          git pull --rebase origin main
           git push
