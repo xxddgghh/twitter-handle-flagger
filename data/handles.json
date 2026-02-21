@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-02-21T16:08:36.102Z",
+  "lastUpdated": "2026-02-21T16:19:05.052Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -144,6 +144,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-02-21T16:08:36.102Z"
+    },
+    "tvmohandaspai": {
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-21T16:19:05.052Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T16:19:05.052Z"
     }
   },
   "pendingReports": {}
