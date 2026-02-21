@@ -74,6 +74,25 @@ jobs:
             if (db.handles[handle]) {
               const handleData = db.handles[handle];
               
+              // Migrate old format to new format if needed
+              if (!handleData.categories && handleData.category) {
+                handleData.categories = {
+                  [handleData.category]: {
+                    count: handleData.reportCount || 1,
+                    reporters: handleData.reporters || [],
+                    firstReported: handleData.addedAt
+                  }
+                };
+                handleData.totalReports = handleData.reportCount || 1;
+                delete handleData.category;
+                delete handleData.reportCount;
+              }
+              
+              // Initialize categories if missing
+              if (!handleData.categories) {
+                handleData.categories = {};
+              }
+              
               // Check if this category already exists for this handle
               if (handleData.categories[category]) {
                 const catData = handleData.categories[category];
