@@ -24,5 +24,39 @@
       "userNotes": [],
       "repeatedTweets": []
     }
+  },
+  "kanekoathegreat": {
+    "summary": "The Twitter/X account @kanekoathegreat has been flagged in two reports by one unique reporter. The main reasons for the flags include being labeled as a \"Liar / Hypocrite\" and being \"Anti-India,\" with each category accounting for 50% of the reports. No specific patterns or behaviors were detailed by the reporter, and there are no notes indicating that certain tweets were reported multiple times. The account was first flagged on February 21, 2026.",
+    "generatedAt": "2026-02-21T10:17:59.150Z",
+    "reportCount": 2,
+    "categories": [
+      "hypocrite",
+      "anti_india"
+    ],
+    "topTweets": [
+      "https://x.com/KanekoaTheGreat/status/2025067883408277767",
+      "https://x.com/KanekoaTheGreat/status/2024865177716642269"
+    ],
+    "grokVerifyLink": "https://x.com/i/grok?text=Analyze%20this%20Twitter%20account%20%40kanekoathegreat%20based%20on%20these%20tweets%3A%20https%3A%2F%2Fx.com%2FKanekoaTheGreat%2Fstatus%2F2025067883408277767%20https%3A%2F%2Fx.com%2FKanekoaTheGreat%2Fstatus%2F2024865177716642269%20-%20Is%20the%20following%20summary%20accurate%3F%20%22The%20Twitter%2FX%20account%20%40kanekoathegreat%20has%20been%20flagged%20in%20two%20reports%20by%20one%20unique%20reporter.%20The%20main%20reasons%20for%20the%20flags%20include%20being%20labeled%20as%20a%20%22Liar%20%2F%20Hypocrite%22%20and%20being%20%22Anti-India%2C%22%20with...%22",
+    "context": {
+      "totalReports": 2,
+      "uniqueReporters": 1,
+      "categoryBreakdown": [
+        {
+          "id": "hypocrite",
+          "label": "Liar / Hypocrite",
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "id": "anti_india",
+          "label": "Anti-India",
+          "count": 1,
+          "percentage": 50
+        }
+      ],
+      "userNotes": [],
+      "repeatedTweets": []
+    }
   }
 }
