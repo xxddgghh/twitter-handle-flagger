@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-21T07:33:01.174Z",
+  "lastUpdated": "2026-02-21T08:17:59.620Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -390,6 +390,14 @@
       "category": "pro_bharat",
       "reportCount": 1,
       "addedAt": "2026-02-21T07:33:01.174Z",
+      "reporters": [
+        "xxddgghh"
+      ]
+    },
+    "sadhgurujv": {
+      "category": "pro_bharat",
+      "reportCount": 1,
+      "addedAt": "2026-02-21T08:17:59.620Z",
       "reporters": [
         "xxddgghh"
       ]
