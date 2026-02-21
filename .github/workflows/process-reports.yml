@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
         
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,7 +41,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.issue.number,
-                body: '❌ Invalid report format. Please use: `[REPORT] @handle - category_id`\n\nValid categories: `paid_promoter`, `bot_automated`, `propaganda`, `anti_india`'
+                body: '❌ Invalid report format. Please use: `[REPORT] @handle - category_id`\n\nValid categories: `bjp_it_cell`, `congress_it_cell`, `aap_it_cell`, `paid_promoter`, `bot_automated`, `propaganda`'
               });
               return;
             }
@@ -181,9 +183,11 @@ jobs:
             fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
             
       - name: Commit changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "Handle Flagger Bot"
+          git config --local user.name "Xpose Bot"
           git add data/handles.json
           git diff --staged --quiet || git commit -m "📊 Update handles database [automated]"
           git push
