@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadStats();
   loadCategories();
   loadSettings();
-  checkPendingReport();
   
   // Tab switching
   const tabs = document.querySelectorAll('.tab');
@@ -23,9 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Submit report button
-  document.getElementById('submitReport').addEventListener('click', submitReport);
-  
   // Sync button
   document.getElementById('syncNow').addEventListener('click', syncDatabase);
   
@@ -35,12 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     saveSettings();
   });
   
-  document.getElementById('toggleTooltips').addEventListener('click', function() {
-    this.classList.toggle('active');
-    saveSettings();
+  // Segment control for highlight style
+  document.querySelectorAll('.segment-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      saveSettings();
+    });
   });
-  
-  document.getElementById('highlightStyle').addEventListener('change', saveSettings);
 });
 
 // Load stats
@@ -77,7 +75,6 @@ async function loadCategories() {
     if (response && response.database) {
       const db = response.database;
       const categoryList = document.getElementById('categoryList');
-      const reportSelect = document.getElementById('reportCategory');
       
       // Get enabled categories from settings
       chrome.runtime.sendMessage({ action: 'getSettings' }, (settingsResponse) => {
@@ -85,7 +82,6 @@ async function loadCategories() {
         const enabledCategories = settings.enabledCategories; // null means all enabled
         
         categoryList.innerHTML = '';
-        reportSelect.innerHTML = '<option value="">Select category</option>';
         
         // Count handles per category (handles can be in multiple categories)
         const categoryCounts = {};
@@ -124,12 +120,6 @@ async function loadCategories() {
           });
           
           categoryList.appendChild(item);
-          
-          // Report dropdown option
-          const option = document.createElement('option');
-          option.value = id;
-          option.textContent = cat.label;
-          reportSelect.appendChild(option);
         });
       });
     }
@@ -171,12 +161,14 @@ async function loadSettings() {
         document.getElementById('toggleBadges').classList.remove('active');
       }
       
-      if (settings.showTooltips === false) {
-        document.getElementById('toggleTooltips').classList.remove('active');
-      }
-      
       if (settings.highlightStyle) {
-        document.getElementById('highlightStyle').value = settings.highlightStyle;
+        // Update segment control
+        document.querySelectorAll('.segment-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.value === settings.highlightStyle) {
+            btn.classList.add('active');
+          }
+        });
       }
     }
   });
@@ -184,10 +176,10 @@ async function loadSettings() {
 
 // Save settings
 async function saveSettings() {
+  const activeSegment = document.querySelector('.segment-btn.active');
   const settings = {
     showBadges: document.getElementById('toggleBadges').classList.contains('active'),
-    showTooltips: document.getElementById('toggleTooltips').classList.contains('active'),
-    highlightStyle: document.getElementById('highlightStyle').value
+    highlightStyle: activeSegment ? activeSegment.dataset.value : 'background'
   };
   
   chrome.runtime.sendMessage({
@@ -195,60 +187,6 @@ async function saveSettings() {
     settings: settings
   }, () => {
     showNotification('Settings saved', 'success');
-  });
-}
-
-// Check for pending report (from context menu)
-function checkPendingReport() {
-  chrome.storage.local.get(['pendingReport'], (result) => {
-    if (result.pendingReport) {
-      document.getElementById('reportHandle').value = '@' + result.pendingReport;
-      
-      // Switch to report tab
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector('[data-tab="report"]').classList.add('active');
-      document.getElementById('report').classList.add('active');
-      
-      // Clear pending
-      chrome.storage.local.remove(['pendingReport']);
-    }
-  });
-}
-
-// Submit report
-async function submitReport() {
-  const handle = document.getElementById('reportHandle').value.replace('@', '').trim();
-  const category = document.getElementById('reportCategory').value;
-  const evidence = document.getElementById('reportEvidence').value.trim();
-  
-  if (!handle) {
-    showNotification('Please enter a handle', 'error');
-    return;
-  }
-  
-  if (!category) {
-    showNotification('Please select a category', 'error');
-    return;
-  }
-  
-  chrome.runtime.sendMessage({
-    action: 'submitReport',
-    handle: handle,
-    category: category,
-    evidence: evidence
-  }, (response) => {
-    if (response && response.url) {
-      window.open(response.url, '_blank');
-      showNotification('Opening GitHub to submit report...', 'success');
-      
-      // Clear form
-      document.getElementById('reportHandle').value = '';
-      document.getElementById('reportCategory').value = '';
-      document.getElementById('reportEvidence').value = '';
-    } else if (response && response.error) {
-      showNotification('Error: ' + response.error, 'error');
-    }
   });
 }
 

@@ -313,6 +313,48 @@
       color: var(--text-secondary);
     }
 
+    /* Segment Control */
+    .segment-control {
+      display: flex;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .segment-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 8px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .segment-btn:hover {
+      color: var(--text);
+      background: var(--border);
+    }
+
+    .segment-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .segment-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
     /* Status */
     .status {
       display: flex;
@@ -422,7 +464,6 @@
 
   <div class="tabs">
     <button class="tab active" data-tab="categories">Categories</button>
-    <button class="tab" data-tab="report">Report</button>
     <button class="tab" data-tab="settings">Settings</button>
   </div>
 
@@ -431,29 +472,6 @@
     <div class="category-list" id="categoryList">
       <!-- Categories loaded dynamically -->
     </div>
-  </div>
-
-  <div id="report" class="tab-content">
-    <div class="status">
-      <div class="status-dot"></div>
-      <span class="status-text">Reports are submitted via GitHub Issues</span>
-    </div>
-    
-    <p class="section-title">Report a handle</p>
-    <div class="report-input-group">
-      <input type="text" class="report-input" id="reportHandle" placeholder="@username">
-      <select class="report-select" id="reportCategory">
-        <option value="">Category</option>
-      </select>
-    </div>
-    <textarea class="report-input" id="reportEvidence" placeholder="Evidence or notes (optional)" style="width: 100%; min-height: 80px; margin-bottom: 12px; resize: vertical;"></textarea>
-    <button class="btn" id="submitReport">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-        <line x1="4" y1="22" x2="4" y2="15"></line>
-      </svg>
-      Submit Report via GitHub
-    </button>
   </div>
 
   <div id="settings" class="tab-content">
@@ -465,24 +483,25 @@
       <div class="category-toggle active" id="toggleBadges"></div>
     </div>
     
-    <div class="setting-item">
-      <div>
-        <div class="setting-label">Show tooltips</div>
-        <div class="setting-description">Show detailed info on hover</div>
-      </div>
-      <div class="category-toggle active" id="toggleTooltips"></div>
-    </div>
-    
-    <div class="setting-item">
+    <div class="setting-item" style="flex-direction: column; align-items: stretch; gap: 12px;">
       <div>
         <div class="setting-label">Highlight style</div>
-        <div class="setting-description">How to highlight flagged tweets</div>
+        <div class="setting-description">How flagged tweets appear in your feed</div>
       </div>
-      <select class="report-select" id="highlightStyle">
-        <option value="border">Border only</option>
-        <option value="background">Background</option>
-        <option value="both">Both</option>
-      </select>
+      <div class="segment-control" id="highlightStyle">
+        <button class="segment-btn" data-value="border">
+          <span class="segment-icon">┃</span>
+          <span>Border</span>
+        </button>
+        <button class="segment-btn active" data-value="background">
+          <span class="segment-icon">█</span>
+          <span>Fill</span>
+        </button>
+        <button class="segment-btn" data-value="both">
+          <span class="segment-icon">▣</span>
+          <span>Both</span>
+        </button>
+      </div>
     </div>
     
     <div style="margin-top: 16px;">
