@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-02-21T14:00:00.000Z",
+  "lastUpdated": "2026-02-21T14:29:35.314Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -40,6 +40,20 @@
       "description": "Indian tech founders, builders, and innovators"
     }
   },
-  "handles": {},
+  "handles": {
+    "thehawkeyex": {
+      "categories": {
+        "pro_bharat": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-21T14:29:35.314Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T14:29:35.314Z"
+    }
+  },
   "pendingReports": {}
 }
