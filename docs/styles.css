@@ -85,10 +85,11 @@ a:hover { text-decoration: underline; }
 }
 
 .landing-logo {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 16px;
-  color: var(--accent);
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .landing-header h1 {
