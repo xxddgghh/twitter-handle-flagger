@@ -41,7 +41,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.issue.number,
-                body: '❌ Invalid report format. Please use: `[REPORT] @handle - category_id`\n\nValid categories: `bjp_it_cell`, `congress_it_cell`, `aap_it_cell`, `paid_promoter`, `bot_automated`, `propaganda`'
+                body: '❌ Invalid report format. Please use: `[REPORT] @handle - category_id`'
               });
               return;
             }
@@ -65,118 +65,205 @@ jobs:
               return;
             }
             
-            // Check if handle is already in main list
-            if (db.handles[handle]) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `ℹ️ @${handle} is already flagged as **${db.categories[db.handles[handle].category].label}**.`
-              });
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                state: 'closed',
-                labels: ['duplicate']
-              });
-              return;
-            }
-            
-            // Initialize pending reports if not exists
+            // Initialize pendingReports if not exists
             if (!db.pendingReports) {
               db.pendingReports = {};
             }
             
-            // Initialize pending reports for this handle if not exists
-            if (!db.pendingReports[handle]) {
-              db.pendingReports[handle] = {
-                category: category,
-                reporters: [],
-                issues: []
-              };
-            }
-            
-            const pending = db.pendingReports[handle];
-            
-            // Check if already reported by this user
-            if (pending.reporters.includes(reporter)) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `ℹ️ You have already reported @${handle}. Current report count: ${pending.reporters.length}/${db.reportThreshold}`
-              });
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                state: 'closed',
-                labels: ['duplicate-reporter']
-              });
-              return;
-            }
-            
-            // Add reporter
-            pending.reporters.push(reporter);
-            pending.issues.push(context.payload.issue.number);
-            
-            // Check if threshold reached
-            if (pending.reporters.length >= db.reportThreshold) {
-              // Add to main handles list
-              db.handles[handle] = {
-                category: category,
-                reportCount: pending.reporters.length,
-                addedAt: new Date().toISOString(),
-                reporters: pending.reporters
-              };
+            // Check if handle already exists in main list
+            if (db.handles[handle]) {
+              const handleData = db.handles[handle];
               
-              // Remove from pending
-              delete db.pendingReports[handle];
-              
-              // Update timestamp
-              db.lastUpdated = new Date().toISOString();
-              
-              // Close all related issues
-              for (const issueNum of pending.issues) {
-                try {
+              // Check if this category already exists for this handle
+              if (handleData.categories[category]) {
+                const catData = handleData.categories[category];
+                
+                // Check if user already reported this handle for this category
+                if (catData.reporters.includes(reporter)) {
                   await github.rest.issues.createComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    issue_number: issueNum,
-                    body: `✅ @${handle} has been added to the database as **${db.categories[category].label}** with ${pending.reporters.length} reports.\n\nThank you for contributing to a more transparent Twitter!`
+                    issue_number: context.payload.issue.number,
+                    body: `ℹ️ You have already reported @${handle} as **${db.categories[category].label}**.\n\nCurrent reports for this category: ${catData.count}`
                   });
                   await github.rest.issues.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    issue_number: issueNum,
+                    issue_number: context.payload.issue.number,
                     state: 'closed',
-                    labels: ['verified', category]
+                    labels: ['duplicate-reporter']
                   });
-                } catch (e) {
-                  console.log(`Could not update issue ${issueNum}: ${e.message}`);
+                  return;
                 }
+                
+                // Add reporter to existing category
+                catData.reporters.push(reporter);
+                catData.count = catData.reporters.length;
+                handleData.totalReports++;
+                db.lastUpdated = new Date().toISOString();
+                
+                // Get primary category (highest count)
+                const primaryCat = Object.entries(handleData.categories)
+                  .sort((a, b) => b[1].count - a[1].count)[0];
+                
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: `✅ Report added! @${handle} now has **${catData.count}** reports as **${db.categories[category].label}**.\n\n**Total reports:** ${handleData.totalReports}\n**Primary category:** ${db.categories[primaryCat[0]].label} (${primaryCat[1].count} reports)`
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  state: 'closed',
+                  labels: ['verified', category]
+                });
+                
+                console.log(`✅ Added report to existing category: @${handle} - ${category}`);
+              } else {
+                // New category for existing handle
+                handleData.categories[category] = {
+                  count: 1,
+                  reporters: [reporter],
+                  firstReported: new Date().toISOString()
+                };
+                handleData.totalReports++;
+                db.lastUpdated = new Date().toISOString();
+                
+                // Get all categories for this handle
+                const catList = Object.entries(handleData.categories)
+                  .sort((a, b) => b[1].count - a[1].count)
+                  .map(([id, data]) => `• **${db.categories[id].label}**: ${data.count} reports`)
+                  .join('\n');
+                
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: `✅ New category added! @${handle} is now also flagged as **${db.categories[category].label}**.\n\n**All categories:**\n${catList}\n\n**Total reports:** ${handleData.totalReports}`
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  state: 'closed',
+                  labels: ['verified', category, 'new-category']
+                });
+                
+                console.log(`✅ Added new category to existing handle: @${handle} - ${category}`);
+              }
+            } else {
+              // Handle doesn't exist yet - check pending reports
+              if (!db.pendingReports[handle]) {
+                db.pendingReports[handle] = { categories: {} };
               }
               
-              console.log(`✅ Added @${handle} to database as ${category}`);
-            } else {
-              // Comment on progress
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `📊 Report recorded for @${handle} as **${db.categories[category].label}**.\n\n**Current reports:** ${pending.reporters.length}/${db.reportThreshold}\n\nThe handle will be added to the database when ${db.reportThreshold} unique users report it.`
-              });
+              const pending = db.pendingReports[handle];
               
-              // Add labels
-              await github.rest.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                labels: ['pending', category]
-              });
+              if (!pending.categories[category]) {
+                pending.categories[category] = {
+                  reporters: [],
+                  issues: []
+                };
+              }
               
-              console.log(`📊 Report recorded: @${handle} (${pending.reporters.length}/${db.reportThreshold})`);
+              const pendingCat = pending.categories[category];
+              
+              // Check if already reported by this user for this category
+              if (pendingCat.reporters.includes(reporter)) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: `ℹ️ You have already reported @${handle} as **${db.categories[category].label}**.\n\nCurrent pending reports: ${pendingCat.reporters.length}/${db.reportThreshold}`
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  state: 'closed',
+                  labels: ['duplicate-reporter']
+                });
+                return;
+              }
+              
+              // Add reporter to pending
+              pendingCat.reporters.push(reporter);
+              pendingCat.issues.push(context.payload.issue.number);
+              
+              // Check if threshold reached for this category
+              if (pendingCat.reporters.length >= db.reportThreshold) {
+                // Create new handle entry with multi-category structure
+                db.handles[handle] = {
+                  categories: {
+                    [category]: {
+                      count: pendingCat.reporters.length,
+                      reporters: pendingCat.reporters,
+                      firstReported: new Date().toISOString()
+                    }
+                  },
+                  totalReports: pendingCat.reporters.length,
+                  addedAt: new Date().toISOString()
+                };
+                
+                // Check if there are other pending categories for this handle
+                for (const [otherCat, otherData] of Object.entries(pending.categories)) {
+                  if (otherCat !== category && otherData.reporters.length >= db.reportThreshold) {
+                    db.handles[handle].categories[otherCat] = {
+                      count: otherData.reporters.length,
+                      reporters: otherData.reporters,
+                      firstReported: new Date().toISOString()
+                    };
+                    db.handles[handle].totalReports += otherData.reporters.length;
+                  }
+                }
+                
+                // Remove from pending
+                delete db.pendingReports[handle];
+                
+                db.lastUpdated = new Date().toISOString();
+                
+                // Close all related issues for this category
+                for (const issueNum of pendingCat.issues) {
+                  try {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: issueNum,
+                      body: `✅ @${handle} has been added to the database as **${db.categories[category].label}** with ${pendingCat.reporters.length} reports.\n\nThank you for contributing to Xpose!`
+                    });
+                    await github.rest.issues.update({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: issueNum,
+                      state: 'closed',
+                      labels: ['verified', category]
+                    });
+                  } catch (e) {
+                    console.log(`Could not update issue ${issueNum}: ${e.message}`);
+                  }
+                }
+                
+                console.log(`✅ Added @${handle} to database as ${category}`);
+              } else {
+                // Not yet at threshold - comment on progress
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: `📊 Report recorded for @${handle} as **${db.categories[category].label}**.\n\n**Current reports:** ${pendingCat.reporters.length}/${db.reportThreshold}\n\nThe handle will be added to the database when ${db.reportThreshold} unique users report it.`
+                });
+                
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  labels: ['pending', category]
+                });
+                
+                console.log(`📊 Report recorded: @${handle} - ${category} (${pendingCat.reporters.length}/${db.reportThreshold})`);
+              }
             }
             
             // Save database
