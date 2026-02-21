@@ -1,0 +1,356 @@
+name: Generate AI Summary
+
+on:
+  workflow_dispatch:
+    inputs:
+      handle:
+        description: 'Twitter handle to generate summary for (without @)'
+        required: true
+        type: string
+      force:
+        description: 'Force regenerate even if summary exists'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  generate-summary:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Generate Summary
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          HANDLE: ${{ github.event.inputs.handle }}
+          FORCE: ${{ github.event.inputs.force }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          node << 'SCRIPT'
+          const fs = require('fs');
+          const https = require('https');
+          
+          const handle = process.env.HANDLE.toLowerCase().replace('@', '');
+          const force = process.env.FORCE === 'true';
+          const repoOwner = process.env.REPO_OWNER;
+          const repoName = process.env.REPO_NAME;
+          
+          console.log('🔍 Generating summary for @' + handle + '...');
+          
+          // Load handles database
+          const dbPath = 'data/handles.json';
+          const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+          
+          // Load or create summaries file
+          const summariesPath = 'data/summaries.json';
+          let summaries = {};
+          if (fs.existsSync(summariesPath)) {
+            summaries = JSON.parse(fs.readFileSync(summariesPath, 'utf8'));
+          }
+          
+          // Check if summary exists and force is false
+          if (summaries[handle] && !force) {
+            console.log('ℹ️ Summary already exists for @' + handle + '. Use force=true to regenerate.');
+            process.exit(0);
+          }
+          
+          // Check if handle exists in database
+          const handleData = db.handles[handle];
+          if (!handleData) {
+            console.log('❌ Handle @' + handle + ' not found in database.');
+            process.exit(1);
+          }
+          
+          // Fetch issues via GitHub API
+          async function fetchIssues() {
+            return new Promise((resolve, reject) => {
+              const query = encodeURIComponent('[REPORT] @' + handle + ' in:title is:issue repo:' + repoOwner + '/' + repoName);
+              const options = {
+                hostname: 'api.github.com',
+                path: '/search/issues?q=' + query + '&sort=created&order=desc&per_page=50',
+                headers: {
+                  'User-Agent': 'Xpose-Bot',
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': 'Bearer ' + process.env.GITHUB_TOKEN
+                }
+              };
+              
+              https.get(options, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                  try {
+                    resolve(JSON.parse(data));
+                  } catch (e) {
+                    reject(e);
+                  }
+                });
+              }).on('error', reject);
+            });
+          }
+          
+          async function callOpenAI(prompt) {
+            return new Promise((resolve, reject) => {
+              const data = JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [
+                  { role: 'system', content: 'You are a neutral summarizer for a community transparency platform. Be factual and concise.' },
+                  { role: 'user', content: prompt }
+                ],
+                max_tokens: 500,
+                temperature: 0.3
+              });
+              
+              const options = {
+                hostname: 'api.openai.com',
+                port: 443,
+                path: '/v1/chat/completions',
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY,
+                  'Content-Length': Buffer.byteLength(data)
+                }
+              };
+              
+              const req = https.request(options, (res) => {
+                let body = '';
+                res.on('data', chunk => body += chunk);
+                res.on('end', () => {
+                  try {
+                    resolve(JSON.parse(body));
+                  } catch (e) {
+                    reject(new Error('Failed to parse OpenAI response'));
+                  }
+                });
+              });
+              
+              req.on('error', reject);
+              req.write(data);
+              req.end();
+            });
+          }
+          
+          async function main() {
+            console.log('📥 Fetching reports...');
+            const issuesData = await fetchIssues();
+            
+            if (!issuesData.items) {
+              console.log('❌ Failed to fetch issues:', issuesData.message || 'Unknown error');
+              process.exit(1);
+            }
+            
+            // Filter to exact matches
+            const handleLower = handle.toLowerCase();
+            const relevantIssues = issuesData.items.filter(issue => {
+              const titleMatch = issue.title.match(/\[REPORT\]\s*@?(\w+)\s*-/i);
+              return titleMatch && titleMatch[1].toLowerCase() === handleLower;
+            });
+            
+            console.log('📊 Found ' + relevantIssues.length + ' reports');
+            
+            if (relevantIssues.length < 1) {
+              console.log('❌ Not enough reports to generate summary.');
+              process.exit(1);
+            }
+            
+            // Build context
+            const categories = handleData.categories || {};
+            const totalReports = handleData.totalReports || 0;
+            
+            // Category breakdown
+            const categoryBreakdown = Object.entries(categories)
+              .map(function(entry) {
+                const catId = entry[0];
+                const catData = entry[1];
+                const catInfo = db.categories[catId];
+                const percentage = Math.round((catData.count / totalReports) * 100);
+                return '- ' + (catInfo ? catInfo.label : catId) + ': ' + catData.count + ' reports (' + percentage + '%)';
+              })
+              .join('\n');
+            
+            // Extract user notes and find repeated tweets
+            const tweetUrls = {};
+            const userNotes = [];
+            
+            for (const issue of relevantIssues) {
+              const body = issue.body || '';
+              
+              // Extract user notes
+              const notesMatch = body.match(/###?\s*(?:Additional\s*)?Notes?\s*\n([\s\S]*?)(?=\n##|$)/i);
+              if (notesMatch && notesMatch[1].trim()) {
+                const note = notesMatch[1].trim().slice(0, 300);
+                if (note && note !== '-' && note.length > 5) {
+                  const catMatch = issue.title.match(/-\s*(\w+)/);
+                  userNotes.push({
+                    note: note,
+                    category: catMatch ? catMatch[1] : 'unknown',
+                    date: issue.created_at
+                  });
+                }
+              }
+              
+              // Extract tweet URLs
+              const urlMatches = body.match(/https?:\/\/(?:twitter\.com|x\.com)\/\w+\/status\/\d+/gi);
+              if (urlMatches) {
+                urlMatches.forEach(url => {
+                  tweetUrls[url] = (tweetUrls[url] || 0) + 1;
+                });
+              }
+            }
+            
+            // Find repeated tweets
+            const repeatedTweets = Object.entries(tweetUrls)
+              .filter(function(entry) { return entry[1] > 1; })
+              .sort(function(a, b) { return b[1] - a[1]; })
+              .slice(0, 5)
+              .map(function(entry) { return '- ' + entry[0] + ' (reported ' + entry[1] + ' times)'; });
+            
+            // Build prompt
+            let contextText = '## Account: @' + handle + '\n\n';
+            contextText += '## Report Statistics\n';
+            contextText += '- Total Reports: ' + totalReports + '\n';
+            contextText += '- Unique Reporters: ' + new Set(relevantIssues.map(i => i.user ? i.user.login : null)).size + '\n';
+            contextText += '- First Flagged: ' + (handleData.addedAt || 'Unknown') + '\n';
+            contextText += '- Categories Reported Under:\n' + categoryBreakdown + '\n\n';
+            contextText += '## User Notes from Reports (' + userNotes.length + ' notes)\n';
+            contextText += userNotes.slice(0, 10).map(function(n, i) {
+              return (i + 1) + '. [' + n.category + '] "' + n.note + '"';
+            }).join('\n') || 'No detailed notes provided.';
+            
+            if (repeatedTweets.length > 0) {
+              contextText += '\n\n## Tweets Reported Multiple Times\n' + repeatedTweets.join('\n');
+            }
+            
+            const prompt = 'You are analyzing community reports about a Twitter/X account for a transparency platform.\n\n' +
+              contextText + '\n\n' +
+              '## Task\n' +
+              'Write a factual 5-8 line summary describing:\n' +
+              '1. The main reasons this account is flagged\n' +
+              '2. Patterns or behaviors noted by reporters\n' +
+              '3. If certain tweets were reported multiple times, mention that\n\n' +
+              'Rules:\n' +
+              '- Be neutral and factual\n' +
+              '- Only state what reports claim, do not make independent judgments\n' +
+              '- Use phrases like "reportedly", "users claim", "flagged for"\n' +
+              '- Keep it concise but informative';
+            
+            console.log('📝 Context built, calling OpenAI...');
+            
+            const openaiResponse = await callOpenAI(prompt);
+            
+            if (openaiResponse.error) {
+              console.log('❌ OpenAI error: ' + openaiResponse.error.message);
+              process.exit(1);
+            }
+            
+            const summary = openaiResponse.choices && openaiResponse.choices[0] && openaiResponse.choices[0].message 
+              ? openaiResponse.choices[0].message.content 
+              : null;
+            
+            if (!summary) {
+              console.log('❌ No summary generated');
+              process.exit(1);
+            }
+            
+            console.log('✅ Summary generated!');
+            console.log(summary);
+            
+            // Build Grok verification link
+            const topTweets = Object.entries(tweetUrls)
+              .sort(function(a, b) { return b[1] - a[1]; })
+              .slice(0, 3)
+              .map(function(entry) { return entry[0]; });
+            
+            const grokQuery = encodeURIComponent(
+              'Analyze this Twitter account @' + handle + ' based on these tweets: ' + topTweets.join(' ') + 
+              ' - Is the following summary accurate? "' + summary.slice(0, 200) + '..."'
+            );
+            const grokLink = 'https://x.com/i/grok?text=' + grokQuery;
+            
+            // Save summary
+            summaries[handle] = {
+              summary: summary,
+              generatedAt: new Date().toISOString(),
+              reportCount: totalReports,
+              categories: Object.keys(categories),
+              topTweets: topTweets,
+              grokVerifyLink: grokLink,
+              context: {
+                totalReports: totalReports,
+                uniqueReporters: new Set(relevantIssues.map(i => i.user ? i.user.login : null)).size,
+                categoryBreakdown: Object.entries(categories).map(function(entry) {
+                  const id = entry[0];
+                  const data = entry[1];
+                  return {
+                    id: id,
+                    label: db.categories[id] ? db.categories[id].label : id,
+                    count: data.count,
+                    percentage: Math.round((data.count / totalReports) * 100)
+                  };
+                }),
+                userNotes: userNotes.slice(0, 10).map(function(n) {
+                  return { category: n.category, note: n.note };
+                }),
+                repeatedTweets: Object.entries(tweetUrls)
+                  .filter(function(entry) { return entry[1] > 1; })
+                  .map(function(entry) { return { url: entry[0], count: entry[1] }; })
+              }
+            };
+            
+            fs.writeFileSync(summariesPath, JSON.stringify(summaries, null, 2));
+            console.log('💾 Summary saved to summaries.json');
+          }
+          
+          main().catch(err => {
+            console.error('Error:', err);
+            process.exit(1);
+          });
+          SCRIPT
+            
+      - name: Commit changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Xpose Bot"
+          
+          git add data/summaries.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git commit -m "🤖 Generate AI summary for @${{ github.event.inputs.handle }}"
+          
+          MAX_RETRIES=3
+          RETRY=0
+          
+          while [ $RETRY -lt $MAX_RETRIES ]; do
+            if git pull --rebase -X ours origin main && git push origin main; then
+              echo "✅ Push successful"
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            RETRY=$((RETRY + 1))
+            echo "⚠️ Attempt $RETRY failed, retrying..."
+            sleep 2
+          done
+          
+          echo "❌ Failed after $MAX_RETRIES retries"
+          exit 1
