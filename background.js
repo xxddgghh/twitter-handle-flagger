@@ -149,6 +149,41 @@ async function getDatabase() {
   return await syncDatabase();
 }
 
+// Get primary category (highest count) from multi-category entry
+function getPrimaryCategory(entry, dbCategories) {
+  if (!entry.categories) return null;
+  
+  // Find category with highest count (tiebreaker: earliest firstReported date)
+  let primaryCatId = null;
+  let highestCount = 0;
+  let earliestDate = null;
+  
+  for (const [catId, catData] of Object.entries(entry.categories)) {
+    const catDate = catData.firstReported ? new Date(catData.firstReported) : new Date();
+    
+    if (catData.count > highestCount) {
+      // Higher count wins
+      highestCount = catData.count;
+      primaryCatId = catId;
+      earliestDate = catDate;
+    } else if (catData.count === highestCount && earliestDate) {
+      // Tie: earlier reported category wins
+      if (catDate < earliestDate) {
+        primaryCatId = catId;
+        earliestDate = catDate;
+      }
+    }
+  }
+  
+  if (!primaryCatId) return null;
+  
+  return {
+    categoryId: primaryCatId,
+    categoryInfo: dbCategories[primaryCatId],
+    count: highestCount
+  };
+}
+
 // Lookup a handle
 async function lookupHandle(handle) {
   const db = await getDatabase();
@@ -158,13 +193,17 @@ async function lookupHandle(handle) {
   const entry = db.handles[normalizedHandle];
   
   if (entry) {
-    const category = db.categories[entry.category];
+    const primary = getPrimaryCategory(entry, db.categories);
+    if (!primary) return null;
+    
     return {
       handle: normalizedHandle,
-      category: entry.category,
-      categoryInfo: category,
-      reportCount: entry.reportCount,
-      addedAt: entry.addedAt
+      category: primary.categoryId,
+      categoryInfo: primary.categoryInfo,
+      reportCount: entry.totalReports,
+      addedAt: entry.addedAt,
+      categories: entry.categories,
+      allCategories: db.categories
     };
   }
   
@@ -183,14 +222,18 @@ async function lookupHandles(handles) {
     const entry = db.handles[normalizedHandle];
     
     if (entry) {
-      const category = db.categories[entry.category];
-      results[normalizedHandle] = {
-        handle: normalizedHandle,
-        category: entry.category,
-        categoryInfo: category,
-        reportCount: entry.reportCount,
-        addedAt: entry.addedAt
-      };
+      const primary = getPrimaryCategory(entry, db.categories);
+      if (primary) {
+        results[normalizedHandle] = {
+          handle: normalizedHandle,
+          category: primary.categoryId,
+          categoryInfo: primary.categoryInfo,
+          reportCount: entry.totalReports,
+          addedAt: entry.addedAt,
+          categories: entry.categories,
+          allCategories: db.categories
+        };
+      }
     }
   }
   

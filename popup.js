@@ -87,10 +87,18 @@ async function loadCategories() {
         categoryList.innerHTML = '';
         reportSelect.innerHTML = '<option value="">Select category</option>';
         
-        // Count handles per category
+        // Count handles per category (handles can be in multiple categories)
         const categoryCounts = {};
         Object.values(db.handles).forEach(handle => {
-          categoryCounts[handle.category] = (categoryCounts[handle.category] || 0) + 1;
+          if (handle.categories) {
+            // New multi-category structure
+            Object.keys(handle.categories).forEach(catId => {
+              categoryCounts[catId] = (categoryCounts[catId] || 0) + 1;
+            });
+          } else if (handle.category) {
+            // Legacy single-category structure (fallback)
+            categoryCounts[handle.category] = (categoryCounts[handle.category] || 0) + 1;
+          }
         });
         
         Object.entries(db.categories).forEach(([id, cat]) => {
