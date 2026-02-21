@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Twitter Handle Flagger",
+  "name": "Xpose",
   "version": "1.0.0",
-  "description": "Community-driven extension to identify and color-code Twitter/X accounts by category (IT Cells, bots, paid promoters)",
+  "description": "X Accounts. Xposed. Community-powered transparency for Twitter/X - see flagged accounts, paid promoters, and more.",
   "permissions": [
     "storage",
     "alarms",

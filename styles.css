@@ -26,10 +26,10 @@ article[data-testid="tweet"][data-flagged-handle] {
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Badge wrapper - contains badge and tooltip */
+/* Badge wrapper - contains badge and link icon */
 .handle-flagger-badge-wrapper {
   display: inline-flex !important;
-  position: relative !important;
+  align-items: center !important;
   margin-left: 8px !important;
   vertical-align: middle !important;
 }
@@ -43,42 +43,19 @@ article[data-testid="tweet"][data-flagged-handle] {
   border-radius: 12px !important;
   font-size: 11px !important;
   font-weight: 600 !important;
+}
+
+/* Link icon next to badge */
+.handle-flagger-link-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
   cursor: pointer !important;
 }
 
-/* Simple tooltip - BELOW badge */
-.handle-flagger-tooltip {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding-top: 6px; /* invisible bridge for hover */
-  z-index: 999999;
-}
-
-.handle-flagger-tooltip .hf-tooltip-content {
-  background: #ffffff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  border: 1px solid #e0e0e0;
-}
-
-.handle-flagger-tooltip .hf-tooltip-content a {
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.handle-flagger-tooltip .hf-tooltip-content a:hover {
-  text-decoration: underline;
-}
-
-/* Show tooltip on badge wrapper hover - stays visible when moving to tooltip */
-.handle-flagger-badge-wrapper:hover .handle-flagger-tooltip {
-  display: block;
+.handle-flagger-link-icon:hover {
+  opacity: 1 !important;
 }
 
 /* Report button - Top right position (near ... menu) */
