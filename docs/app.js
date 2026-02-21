@@ -20,6 +20,43 @@
   let totalIssues = 0;
   let profilesShown = CONFIG.topCount;
 
+  // Helper: Get primary category (highest count) from multi-category structure
+  function getPrimaryCategory(info) {
+    if (!info.categories) return null;
+    
+    // Find category with highest count (tiebreaker: earliest firstReported date)
+    let primaryId = null;
+    let highestCount = 0;
+    let earliestDate = null;
+    
+    for (const [catId, catData] of Object.entries(info.categories)) {
+      const catDate = catData.firstReported ? new Date(catData.firstReported) : new Date();
+      
+      if (catData.count > highestCount) {
+        highestCount = catData.count;
+        primaryId = catId;
+        earliestDate = catDate;
+      } else if (catData.count === highestCount && earliestDate) {
+        // Tie: earlier reported category wins
+        if (catDate < earliestDate) {
+          primaryId = catId;
+          earliestDate = catDate;
+        }
+      }
+    }
+    
+    return primaryId;
+  }
+
+  // Helper: Get sorted categories for a handle
+  function getSortedCategories(info) {
+    if (!info.categories) return [];
+    
+    return Object.entries(info.categories)
+      .map(([id, data]) => ({ id, ...data }))
+      .sort((a, b) => b.count - a.count);
+  }
+
   // DOM
   const $ = id => document.getElementById(id);
   const el = {
@@ -203,8 +240,18 @@
   function renderCategories() {
     const grouped = {};
     for (const [h, info] of Object.entries(db.handles)) {
-      if (!grouped[info.category]) grouped[info.category] = [];
-      grouped[info.category].push({ handle: h, ...info });
+      // Handle can be in multiple categories
+      if (info.categories) {
+        for (const [catId, catData] of Object.entries(info.categories)) {
+          if (!grouped[catId]) grouped[catId] = [];
+          grouped[catId].push({ 
+            handle: h, 
+            reportCount: catData.count,
+            totalReports: info.totalReports,
+            ...info 
+          });
+        }
+      }
     }
     for (const cat of Object.keys(grouped)) {
       grouped[cat].sort((a, b) => (b.reportCount || 1) - (a.reportCount || 1));
@@ -257,7 +304,7 @@
   function renderProfiles() {
     const sorted = Object.entries(db.handles)
       .map(([h, info]) => ({ handle: h, ...info }))
-      .sort((a, b) => (b.reportCount || 1) - (a.reportCount || 1));
+      .sort((a, b) => (b.totalReports || 1) - (a.totalReports || 1));
 
     const toShow = sorted.slice(0, profilesShown);
     if (!toShow.length) {
@@ -267,7 +314,9 @@
     }
 
     el.profilesList.innerHTML = toShow.map((p, i) => {
-      const cat = db.categories[p.category];
+      const primaryCatId = getPrimaryCategory(p);
+      const cat = primaryCatId ? db.categories[primaryCatId] : null;
+      const categoryCount = p.categories ? Object.keys(p.categories).length : 0;
       const rank = i + 1;
       return `
         <div class="profile-item" data-h="${p.handle}">
@@ -276,11 +325,11 @@
           <div class="pi-info">
             <div class="pi-handle">@${p.handle}</div>
             ${cat ? `<div class="pi-badge" style="background:${cat.bgColor};color:${cat.color};border:1px solid ${cat.borderColor}">
-              <span class="pi-badge-dot" style="background:${cat.color}"></span>${cat.label}
+              <span class="pi-badge-dot" style="background:${cat.color}"></span>${cat.label}${categoryCount > 1 ? ` +${categoryCount - 1}` : ''}
             </div>` : ''}
           </div>
           <div class="pi-stats">
-            <div class="pi-count">${p.reportCount || 1}</div>
+            <div class="pi-count">${p.totalReports || 1}</div>
             <div class="pi-label">reports</div>
           </div>
         </div>
@@ -314,11 +363,13 @@
       return;
     }
     el.searchDropdown.innerHTML = handles.slice(0, 8).map(({ handle, info }) => {
-      const cat = db?.categories[info.category];
+      const primaryCatId = getPrimaryCategory(info);
+      const cat = primaryCatId ? db?.categories[primaryCatId] : null;
+      const categoryCount = info.categories ? Object.keys(info.categories).length : 0;
       return `
         <div class="dropdown-item" data-h="${handle}">
           <span class="dropdown-handle">@${handle}</span>
-          ${cat ? `<span class="dropdown-badge" style="background:${cat.bgColor};color:${cat.color};border:1px solid ${cat.borderColor}">${cat.label}</span>` : ''}
+          ${cat ? `<span class="dropdown-badge" style="background:${cat.bgColor};color:${cat.color};border:1px solid ${cat.borderColor}">${cat.label}${categoryCount > 1 ? ` +${categoryCount - 1}` : ''}</span>` : ''}
         </div>
       `;
     }).join('');
@@ -395,14 +446,18 @@
 
   // Render
   function renderProfile(h, info, issues = []) {
-    const cat = db?.categories[info.category];
+    const primaryCatId = getPrimaryCategory(info);
+    const cat = primaryCatId ? db?.categories[primaryCatId] : null;
+    const sortedCategories = getSortedCategories(info);
+    
     el.profileAvatar.src = `https://unavatar.io/twitter/${h}`;
     el.profileAvatar.onerror = () => { el.profileAvatar.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23657786"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-3-2-6-8-6z"/></svg>'; };
     el.profileHandle.textContent = `@${h}`;
     el.profileLink.href = `https://x.com/${h}`;
 
     if (cat) {
-      el.profileBadge.innerHTML = `
+      // Primary badge
+      let badgeHtml = `
         <div class="badge-large" style="background:${cat.bgColor};border:2px solid ${cat.borderColor}">
           <span class="dot" style="background:${cat.color}"></span>
           <div>
@@ -412,7 +467,37 @@
         </div>
       `;
       
-      // Show summary if category has description
+      // Category breakdown if multiple categories
+      if (sortedCategories.length > 1) {
+        const totalReports = info.totalReports || sortedCategories.reduce((sum, c) => sum + c.count, 0);
+        badgeHtml += `
+          <div class="category-breakdown">
+            <h4>Category Breakdown</h4>
+            <div class="breakdown-bars">
+              ${sortedCategories.map(catData => {
+                const catInfo = db.categories[catData.id];
+                const percentage = Math.round((catData.count / totalReports) * 100);
+                return `
+                  <div class="breakdown-item">
+                    <div class="breakdown-label">
+                      <span class="breakdown-dot" style="background:${catInfo.color}"></span>
+                      <span>${catInfo.label}</span>
+                      <span class="breakdown-count">${catData.count} (${percentage}%)</span>
+                    </div>
+                    <div class="breakdown-bar">
+                      <div class="breakdown-fill" style="width:${percentage}%;background:${catInfo.color}"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+      
+      el.profileBadge.innerHTML = badgeHtml;
+      
+      // Show summary
       if (cat.description) {
         el.summaryText.textContent = cat.description;
         el.profileSummary.classList.remove('hidden');
@@ -428,7 +513,7 @@
     const uniqueUsers = new Set(issues.map(i => i.user?.login).filter(Boolean));
     el.uniqueReporters.textContent = uniqueUsers.size || '-';
     
-    el.reportCount.textContent = info.reportCount || totalIssues || 1;
+    el.reportCount.textContent = info.totalReports || totalIssues || 1;
     el.firstFlagged.textContent = info.addedAt ? formatDate(info.addedAt) : '-';
     el.lastReport.textContent = issues.length ? formatDate(issues[0].created_at) : '-';
     
