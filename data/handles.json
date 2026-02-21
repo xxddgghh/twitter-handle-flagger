@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "lastUpdated": "2026-02-21T08:30:00.000Z",
+  "lastUpdated": "2026-02-21T08:44:52.981Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -52,7 +52,9 @@
       "categories": {
         "paid_promoter": {
           "count": 5,
-          "reporters": ["legacy_migration"],
+          "reporters": [
+            "legacy_migration"
+          ],
           "firstReported": "2026-02-15T00:00:00Z"
         }
       },
@@ -63,7 +65,9 @@
       "categories": {
         "anti_india": {
           "count": 1,
-          "reporters": ["legacy_migration"],
+          "reporters": [
+            "legacy_migration"
+          ],
           "firstReported": "2026-02-15T00:00:00Z"
         }
       },
@@ -74,7 +78,9 @@
       "categories": {
         "anti_india": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T09:00:32.733Z"
         }
       },
@@ -85,7 +91,9 @@
       "categories": {
         "anti_india": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T09:06:15.324Z"
         }
       },
@@ -96,7 +104,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T09:45:03.409Z"
         }
       },
@@ -107,7 +117,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T09:50:49.783Z"
         }
       },
@@ -118,7 +130,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T10:05:15.303Z"
         }
       },
@@ -129,7 +143,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T10:07:45.545Z"
         }
       },
@@ -140,7 +156,9 @@
       "categories": {
         "paid_promoter": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T10:23:07.702Z"
         }
       },
@@ -151,7 +169,9 @@
       "categories": {
         "anti_india": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T11:49:14.360Z"
         }
       },
@@ -162,7 +182,9 @@
       "categories": {
         "anti_india": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T11:52:05.191Z"
         }
       },
@@ -173,7 +195,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T11:58:42.091Z"
         }
       },
@@ -184,7 +208,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:01:09.835Z"
         }
       },
@@ -195,7 +221,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:13:33.542Z"
         }
       },
@@ -206,7 +234,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:33:36.176Z"
         }
       },
@@ -217,7 +247,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:35:31.078Z"
         }
       },
@@ -228,7 +260,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:41:06.936Z"
         }
       },
@@ -239,7 +273,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T12:41:41.265Z"
         }
       },
@@ -250,7 +286,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T13:44:58.581Z"
         }
       },
@@ -261,7 +299,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-15T14:56:32.908Z"
         }
       },
@@ -272,7 +312,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T05:34:22.107Z"
         }
       },
@@ -283,7 +325,9 @@
       "categories": {
         "paid_promoter": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T05:46:22.550Z"
         }
       },
@@ -294,7 +338,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T05:59:49.367Z"
         }
       },
@@ -305,7 +351,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T06:53:43.869Z"
         }
       },
@@ -316,7 +364,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T06:56:11.886Z"
         }
       },
@@ -327,7 +377,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T07:06:33.909Z"
         }
       },
@@ -338,7 +390,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T07:10:07.929Z"
         }
       },
@@ -349,7 +403,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T07:18:50.637Z"
         }
       },
@@ -360,7 +416,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T08:44:46.385Z"
         }
       },
@@ -371,7 +429,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T10:26:35.509Z"
         }
       },
@@ -382,7 +442,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T10:41:04.644Z"
         }
       },
@@ -393,7 +455,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T17:40:47.221Z"
         }
       },
@@ -404,7 +468,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-16T17:46:24.691Z"
         }
       },
@@ -415,7 +481,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T00:49:47.160Z"
         }
       },
@@ -426,7 +494,9 @@
       "categories": {
         "paid_promoter": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T06:55:52.222Z"
         }
       },
@@ -437,7 +507,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T07:07:10.782Z"
         }
       },
@@ -448,7 +520,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T08:30:48.957Z"
         }
       },
@@ -459,7 +533,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T13:27:17.416Z"
         }
       },
@@ -470,7 +546,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-17T14:59:42.358Z"
         }
       },
@@ -481,7 +559,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-18T05:24:57.080Z"
         }
       },
@@ -492,7 +572,9 @@
       "categories": {
         "brown_sepoy": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-18T08:44:10.146Z"
         }
       },
@@ -503,7 +585,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-18T14:31:55.456Z"
         }
       },
@@ -514,7 +598,9 @@
       "categories": {
         "propaganda": {
           "count": 1,
-          "reporters": ["pareshkumar91"],
+          "reporters": [
+            "pareshkumar91"
+          ],
           "firstReported": "2026-02-18T17:32:54.963Z"
         }
       },
@@ -525,7 +611,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-21T07:33:01.174Z"
         }
       },
@@ -536,7 +624,9 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-21T08:17:59.620Z"
         }
       },
@@ -547,12 +637,22 @@
       "categories": {
         "pro_bharat": {
           "count": 1,
-          "reporters": ["xxddgghh"],
+          "reporters": [
+            "xxddgghh"
+          ],
           "firstReported": "2026-02-21T08:26:55.610Z"
         }
       },
       "totalReports": 1,
       "addedAt": "2026-02-21T08:26:55.610Z"
+    },
+    "comrademallu": {
+      "category": "propaganda",
+      "reportCount": 1,
+      "addedAt": "2026-02-21T08:44:52.981Z",
+      "reporters": [
+        "xxddgghh"
+      ]
     }
   },
   "pendingReports": {}
