@@ -427,14 +427,14 @@
 
     if (info) {
       addRecent(h);
+      showState('found');
       renderProfile(h, info, issues.items);
       renderReports(issues.items);
-      showState('found');
     } else if (issues.items.length) {
       addRecent(h);
+      showState('found');
       renderPendingProfile(h, issues);
       renderReports(issues.items);
-      showState('found');
     } else {
       renderNotFound(h);
       showState('notfound');
