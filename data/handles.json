@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "lastUpdated": "2026-02-21T09:13:46.326Z",
+  "lastUpdated": "2026-02-21T09:15:37.992Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -675,9 +675,16 @@
             "xxddgghh"
           ],
           "firstReported": "2026-02-21T09:13:46.326Z"
+        },
+        "anti_india": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-21T09:15:37.992Z"
         }
       },
-      "totalReports": 1,
+      "totalReports": 2,
       "addedAt": "2026-02-21T09:13:46.326Z"
     }
   },
