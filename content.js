@@ -223,7 +223,7 @@
 
   // Initialize
   async function init() {
-    console.log('Twitter Handle Flagger initialized');
+    console.log('Xpose extension initialized');
     
     // Load categories and settings
     await loadCategories();
@@ -240,6 +240,21 @@
       if (namespace === 'sync' && changes.enabledCategories) {
         loadSettings().then(() => rescanAllTweets());
       }
+    });
+    
+    // Listen for database update notifications from background
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === 'databaseUpdated') {
+        console.log('📢 Database updated, refreshing...');
+        // Clear cache and reload
+        handleCache = {};
+        categories = {};
+        loadCategories().then(() => {
+          rescanAllTweets();
+        });
+        sendResponse({ received: true });
+      }
+      return true;
     });
   }
 

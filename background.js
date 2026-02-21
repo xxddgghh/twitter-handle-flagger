@@ -67,7 +67,9 @@ async function syncDatabase() {
   console.log('Syncing handle database from GitHub...');
   
   try {
-    const response = await fetch(CONFIG.databaseUrl, {
+    // Add cache-busting timestamp to bypass GitHub CDN cache
+    const cacheBuster = `?t=${Date.now()}`;
+    const response = await fetch(CONFIG.databaseUrl + cacheBuster, {
       cache: 'no-cache',
       headers: {
         'Accept': 'application/json'
@@ -78,6 +80,10 @@ async function syncDatabase() {
       const data = await response.json();
       await saveDatabase(data);
       console.log('✅ Database synced from GitHub:', Object.keys(data.handles).length, 'handles');
+      
+      // Notify all Twitter tabs to refresh their cache
+      notifyAllTabs();
+      
       return data;
     } else {
       console.warn('⚠️ GitHub returned status:', response.status);
@@ -100,6 +106,21 @@ async function syncDatabase() {
   
   console.log('❌ No database available - push handles.json to GitHub repo');
   return { categories: {}, handles: {} };
+}
+
+// Notify all Twitter/X tabs to refresh their cache
+async function notifyAllTabs() {
+  try {
+    const tabs = await chrome.tabs.query({ url: ['*://twitter.com/*', '*://x.com/*'] });
+    for (const tab of tabs) {
+      chrome.tabs.sendMessage(tab.id, { action: 'databaseUpdated' }).catch(() => {
+        // Tab might not have content script loaded, ignore error
+      });
+    }
+    console.log(`📢 Notified ${tabs.length} Twitter tab(s) to refresh`);
+  } catch (error) {
+    console.warn('Could not notify tabs:', error.message);
+  }
 }
 
 // Get cached database without triggering sync
