@@ -1,2 +1,28 @@
 {
+  "mrsinha": {
+    "summary": "The Twitter/X account @mrsinha has been flagged a total of 5 times, all under the category of \"Paid Promoter,\" indicating that users claim the account is promoting content for compensation. There is only one unique reporter for these flags, and the account was first reported on February 15, 2026. No detailed user notes were provided in the reports. There is no indication of specific tweets being reported multiple times, as all reports fall under the same category without additional context.",
+    "generatedAt": "2026-02-21T10:00:07.225Z",
+    "reportCount": 5,
+    "categories": [
+      "paid_promoter"
+    ],
+    "topTweets": [
+      "https://x.com/Mrsinha/status/1133062091496050690"
+    ],
+    "grokVerifyLink": "https://x.com/i/grok?text=Analyze%20this%20Twitter%20account%20%40mrsinha%20based%20on%20these%20tweets%3A%20https%3A%2F%2Fx.com%2FMrsinha%2Fstatus%2F1133062091496050690%20-%20Is%20the%20following%20summary%20accurate%3F%20%22The%20Twitter%2FX%20account%20%40mrsinha%20has%20been%20flagged%20a%20total%20of%205%20times%2C%20all%20under%20the%20category%20of%20%22Paid%20Promoter%2C%22%20indicating%20that%20users%20claim%20the%20account%20is%20promoting%20content%20for%20compensation.%20There%20is%20o...%22",
+    "context": {
+      "totalReports": 5,
+      "uniqueReporters": 1,
+      "categoryBreakdown": [
+        {
+          "id": "paid_promoter",
+          "label": "Paid Promoter",
+          "count": 5,
+          "percentage": 100
+        }
+      ],
+      "userNotes": [],
+      "repeatedTweets": []
+    }
+  }
 }
