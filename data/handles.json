@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "lastUpdated": "2026-02-21T09:10:12.939Z",
+  "lastUpdated": "2026-02-21T09:13:46.326Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -666,6 +666,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-02-21T09:10:12.939Z"
+    },
+    "kanekoathegreat": {
+      "categories": {
+        "hypocrite": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-21T09:13:46.326Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-21T09:13:46.326Z"
     }
   },
   "pendingReports": {}
