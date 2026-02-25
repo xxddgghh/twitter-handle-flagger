@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-02-24T04:44:11.066Z",
+  "lastUpdated": "2026-02-25T08:17:36.829Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -326,6 +326,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-02-24T04:44:11.066Z"
+    },
+    "khaleesiji": {
+      "categories": {
+        "anti_india_racism": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-02-25T08:17:36.829Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-02-25T08:17:36.829Z"
     }
   },
   "pendingReports": {}
