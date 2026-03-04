@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-03-03T08:10:09.268Z",
+  "lastUpdated": "2026-03-04T19:45:38.627Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -417,6 +417,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-03-03T08:10:09.268Z"
+    },
+    "tanishqkumar07": {
+      "categories": {
+        "tech_builder": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-03-04T19:45:38.627Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-03-04T19:45:38.627Z"
     }
   },
   "pendingReports": {}
