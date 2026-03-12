@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "lastUpdated": "2026-03-12T11:09:01.824Z",
+  "lastUpdated": "2026-03-12T17:52:46.376Z",
   "reportThreshold": 1,
   "githubRepo": "xxddgghh/twitter-handle-flagger",
   "categories": {
@@ -586,6 +586,19 @@
       },
       "totalReports": 1,
       "addedAt": "2026-03-12T11:09:01.824Z"
+    },
+    "lauraloomer": {
+      "categories": {
+        "anti_india_racism": {
+          "count": 1,
+          "reporters": [
+            "xxddgghh"
+          ],
+          "firstReported": "2026-03-12T17:52:46.376Z"
+        }
+      },
+      "totalReports": 1,
+      "addedAt": "2026-03-12T17:52:46.376Z"
     }
   },
   "pendingReports": {}
